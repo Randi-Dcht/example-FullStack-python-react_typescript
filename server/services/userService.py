@@ -2,13 +2,14 @@ from models.models import db, LoginUser
 
 
 def create_user(username, password, email, role):
-    db.session.add(LoginUser(
+    user = LoginUser(
         username=username,
         password=password,
         email=email,
-        role=role))
+        role=role)
+    db.session.add(user)
     db.session.commit()
-
+    return user.id
 
 def get_user(userId):
     user = LoginUser.query.filter_by(id=userId).first()
