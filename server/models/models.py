@@ -43,7 +43,7 @@ class Command(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, db.ForeignKey('login_users.id'), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(50), nullable=False, default='creation')  # creation, waiting, preparation, cancellation, finish
     description = db.Column(db.Text, nullable=True)
 
 
