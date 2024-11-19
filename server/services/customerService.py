@@ -4,6 +4,8 @@ from services.userService import get_user, create_user, put_user, delete_user
 
 def create_customer(username, password, email, role, postal_code, city, country, phone, street):
     userId = create_user(username, password, email, role)
+    if userId == -1:
+        return -1
     customer = Customer(
         user_id=userId,
         postal_code=postal_code,
@@ -32,8 +34,9 @@ def get_customer(userId):
     }
 
 
-def put_customer(userId, postal_code, city, country, phone, street):
+def put_customer(userId, postal_code, city, country, phone, street, username, email):
     customer = Customer.query.filter_by(user_id=userId).first()
+    put_user(userId, username, email)
     if postal_code is not None:
         customer.postal_code = postal_code
     if city is not None:

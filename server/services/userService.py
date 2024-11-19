@@ -2,6 +2,10 @@ from models.models import db, LoginUser
 
 
 def create_user(username, password, email, role):
+    if role not in get_list_roles():
+        return -1
+    if LoginUser.query.filter_by(email=email).first() is not None:
+        return -1
     user = LoginUser(
         username=username,
         password=password,
@@ -11,19 +15,33 @@ def create_user(username, password, email, role):
     db.session.commit()
     return user.id
 
+
+def get_list_roles():
+    return ['admin', 'customer', 'worker']
+
+
+def check_user(username, password):
+    user = LoginUser.query.filter_by(username=username).first()
+    if user is None:
+        return -1, None
+    if user.password != password: # TODO check_password_hash(user.password, password):
+        return -1, None
+    if not user.active:
+        return -1, None
+    return user.id, user.role
+
+
 def get_user(userId):
     user = LoginUser.query.filter_by(id=userId).first()
     return user
 
 
-def put_user(userId, username, email, role):
+def put_user(userId, username, email):
     user = LoginUser.query.filter_by(id=userId).first()
     if username is not None:
         user.username = username
     if email is not None:
         user.email = email
-    if role is not None:
-        user.role = role
     db.session.commit()
 
 
