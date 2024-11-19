@@ -11,7 +11,7 @@ from flask_jwt_extended import (
 from flask_restful import Api, Resource
 from jwt import ExpiredSignatureError, DecodeError
 from models.models import db
-from services.customerService import get_customer, put_customer, delete_customer
+from services.customerService import get_customer, put_customer, delete_customer, create_customer
 from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user
 
 
@@ -21,7 +21,7 @@ load_dotenv()
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URI')
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=2)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 app.config["static_folder"] = os.getenv('STATIC_FOLDER')
 CORS(app, resources={r"/*": {"origins": "*"}})
 api = Api(app)
@@ -43,8 +43,8 @@ def hello():
 
 
 # ----------------- Controller Account -----------------
-@app.route("/api/login")
-def post(self):
+@app.post("/api/login")
+def login(self):
     data = request.get_json()
     if data is None:
         return {"msg": "No data provided"}, 400
@@ -56,7 +56,9 @@ def post(self):
     if user == -1 or role is None:
         return {"msg": "error connexion"}, 401
     access_token = create_access_token(identity=user)
-    return {"access_token": access_token, "type": role}, 200
+    return {"access_token": access_token,
+            "refresh_token": "refresh_token",
+            "type": role}, 200
 
 
 @app.route("/api/account")
@@ -123,6 +125,31 @@ class Account(Resource):
                 return {"msg": "User deleted"}, 200
         except (DecodeError, ExpiredSignatureError):
             return {"msg": "Authentication required"}, 401
+
+    def post(self):
+        data = request.get_json()
+        if data is None:
+            return {"msg": "No data provided"}, 400
+        if data.get("username") is None or data.get("username") == "":
+            return {"msg": "No username provided"}, 401
+        if data.get("password") is None or data.get("password") == "":
+            return {"msg": "No password provided"}, 401
+        if data.get("email") is None or data.get("email") == "" or "@" not in data.get("email"):
+            return {"msg": "No email provided"}, 401
+        if data.get("postal_code") is None or data.get("postal_code") == "":
+            return {"msg": "No postal code provided"}, 401
+        if data.get("city") is None or data.get("city") == "":
+            return {"msg": "No city provided"}, 401
+        if data.get("country") is None or data.get("country") == "":
+            return {"msg": "No country provided"}, 401
+        if data.get("phone") is None or data.get("phone") == "":
+            return {"msg": "No phone provided"}, 401
+        if data.get("street") is None or data.get("street") == "":
+            return {"msg": "No street provided"}, 401
+        create_customer(data.get("username"), data.get("password"), data.get("email"), "customer",
+                        data.get("postal_code"), data.get("city"), data.get("country"), data.get("phone"),
+                        data.get("street"))
+        return {"msg": "User created"}, 200
 
 
 @app.route("/api/account/<string:action>/<int:userId>")
