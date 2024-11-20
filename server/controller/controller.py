@@ -12,8 +12,7 @@ from flask_restful import Api, Resource
 from jwt import ExpiredSignatureError, DecodeError
 from models.models import db
 from services.customerService import get_customer, put_customer, delete_customer, create_customer
-from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user
-
+from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user, create_user
 
 load_dotenv()
 
@@ -59,6 +58,33 @@ def login(self):
     return {"access_token": access_token,
             "refresh_token": "refresh_token",
             "type": role}, 200
+
+
+@app.post("/api/signup")
+def signup(self):
+    data = request.get_json()
+    if data is None:
+        return {"msg": "No data provided"}, 400
+    if data.get("username") is None or data.get("username") == "":
+        return {"msg": "No username provided"}, 401
+    if data.get("password") is None or data.get("password") == "":
+        return {"msg": "No password provided"}, 401
+    if data.get("email") is None or data.get("email") == "" or "@" not in data.get("email"):
+        return {"msg": "No email provided"}, 401
+    if data.get("postal_code") is None or data.get("postal_code") == "":
+        return {"msg": "No postal code provided"}, 401
+    if data.get("city") is None or data.get("city") == "":
+        return {"msg": "No city provided"}, 401
+    if data.get("country") is None or data.get("country") == "":
+        return {"msg": "No country provided"}, 401
+    if data.get("phone") is None or data.get("phone") == "":
+        return {"msg": "No phone provided"}, 401
+    if data.get("street") is None or data.get("street") == "":
+        return {"msg": "No street provided"}, 401
+    create_customer(data.get("username"), data.get("password"), data.get("email"), "customer",
+                    data.get("postal_code"), data.get("city"), data.get("country"), data.get("phone"),
+                    data.get("street"))
+    return {"msg": "User created"}, 200
 
 
 @app.route("/api/account")
@@ -126,30 +152,29 @@ class Account(Resource):
         except (DecodeError, ExpiredSignatureError):
             return {"msg": "Authentication required"}, 401
 
+    @jwt_required()
     def post(self):
-        data = request.get_json()
-        if data is None:
-            return {"msg": "No data provided"}, 400
-        if data.get("username") is None or data.get("username") == "":
-            return {"msg": "No username provided"}, 401
-        if data.get("password") is None or data.get("password") == "":
-            return {"msg": "No password provided"}, 401
-        if data.get("email") is None or data.get("email") == "" or "@" not in data.get("email"):
-            return {"msg": "No email provided"}, 401
-        if data.get("postal_code") is None or data.get("postal_code") == "":
-            return {"msg": "No postal code provided"}, 401
-        if data.get("city") is None or data.get("city") == "":
-            return {"msg": "No city provided"}, 401
-        if data.get("country") is None or data.get("country") == "":
-            return {"msg": "No country provided"}, 401
-        if data.get("phone") is None or data.get("phone") == "":
-            return {"msg": "No phone provided"}, 401
-        if data.get("street") is None or data.get("street") == "":
-            return {"msg": "No street provided"}, 401
-        create_customer(data.get("username"), data.get("password"), data.get("email"), "customer",
-                        data.get("postal_code"), data.get("city"), data.get("country"), data.get("phone"),
-                        data.get("street"))
-        return {"msg": "User created"}, 200
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            data = request.get_json()
+            if data is None:
+                return {"msg": "No data provided"}, 400
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role == "admin":
+                if data.get("role") is None or data.get("role") == "":
+                    return {"msg": "No role provided"}, 401
+                if data.get("username") is None or data.get("username") == "":
+                    return {"msg": "No username provided"}, 401
+                if data.get("password") is None or data.get("password") == "":
+                    return {"msg": "No password provided"}, 401
+                if data.get("email") is None or data.get("email") == "" or "@" not in data.get("email"):
+                    return {"msg": "No email provided"}, 401
+                create_user(data.get("username"), data.get("password"), data.get("email"), data.get("role"))
+        except (DecodeError, ExpiredSignatureError):
+            return {"msg": "Authentication required"}, 401
 
 
 @app.route("/api/account/<string:action>/<int:userId>")

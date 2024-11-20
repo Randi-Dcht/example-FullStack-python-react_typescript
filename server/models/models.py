@@ -13,7 +13,7 @@ class LoginUser(db.Model):
     role = db.Column(db.String(50), nullable=False) # admin, customer, worker
     created_at = db.Column(db.DateTime, nullable=False, default=db.func.now())
     active = db.Column(db.Boolean, nullable=False, default=True)
-    mail_verified = db.Column(db.Boolean, nullable=True, default=False)
+    first_connect = db.Column(db.Boolean, nullable=True, default=True)
 
 
 class Customer(db.Model):
