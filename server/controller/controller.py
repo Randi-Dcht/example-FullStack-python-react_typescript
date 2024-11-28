@@ -12,6 +12,7 @@ from flask_restful import Api, Resource
 from jwt import ExpiredSignatureError, DecodeError
 from models.models import db
 from services.customerService import get_customer, put_customer, delete_customer, create_customer
+from services.productService import get_list_products, get_product, create_product, put_product
 from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user, create_user
 
 load_dotenv()
@@ -43,7 +44,7 @@ def hello():
 
 # ----------------- Controller Account -----------------
 @app.post("/api/login")
-def login(self):
+def login():
     data = request.get_json()
     if data is None:
         return {"msg": "No data provided"}, 400
@@ -59,9 +60,8 @@ def login(self):
             "refresh_token": "refresh_token",
             "type": role}, 200
 
-
 @app.post("/api/signup")
-def signup(self):
+def signup():
     data = request.get_json()
     if data is None:
         return {"msg": "No data provided"}, 400
@@ -86,8 +86,6 @@ def signup(self):
                     data.get("street"))
     return {"msg": "User created"}, 200
 
-
-@app.route("/api/account")
 class Account(Resource):
     @jwt_required()
     def get(self):
@@ -101,8 +99,8 @@ class Account(Resource):
                 return {
                     "email": user.email,
                     "username": user.username,
-                    "created_at": user.created_at
-                }
+                    "created_at": user.created_at.isoformat()
+                }, 200
             if user.role == "customer":
                 return get_customer(id_user), 200
         except (DecodeError, ExpiredSignatureError):
@@ -176,8 +174,6 @@ class Account(Resource):
         except (DecodeError, ExpiredSignatureError):
             return {"msg": "Authentication required"}, 401
 
-
-@app.route("/api/account/<string:action>/<int:userId>")
 class AccountAction(Resource):
     @jwt_required()
     def put(self, action, userId):
@@ -199,12 +195,83 @@ class AccountAction(Resource):
             return {"msg": "Authentication required"}, 401
 
 
+# ----------------- Controller Product -----------------
+class Product(Resource):
+    def get(self):
+        return get_list_products(), 200
+
+    def get(self, productId):
+        return get_product(productId), 200
+
+    @jwt_required()
+    def post(self):
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            data = request.get_json()
+            if data is None:
+                return {"msg": "No data provided"}, 400
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role != "admin":
+                return {"msg": "You are not allowed to do this action"}, 401
+            if data.get("name") is None or data.get("name") == "":
+                return {"msg": "No name provided"}, 401
+            if data.get("price") is None or data.get("price") == "":
+                return {"msg": "No price provided"}, 401
+            if data.get("tva") is None or data.get("tva") == "":
+                return {"msg": "No tva provided"}, 401
+            if data.get("description") is None or data.get("description") == "":
+                return {"msg": "No description provided"}, 401
+            if data.get("stock") is None or data.get("stock") == "":
+                return {"msg": "No stock provided"}, 401
+            create_product(data.get("name"), data.get("price"), data.get("tva"), data.get("description"),
+                           data.get("stock"), data.get("picture") if data.get("picture") is not None else None)
+        except (DecodeError, ExpiredSignatureError):
+            return {"msg": "Authentication required"}, 401
+
+        @jwt_required()
+        def put(self):
+            try:
+                verify_jwt_in_request()
+                id_user = get_jwt_identity()
+                user = get_user(id_user)
+                data = request.get_json()
+                if data is None:
+                    return {"msg": "No data provided"}, 400
+                if user is None:
+                    return {"msg": "No user found"}, 401
+                if user.role != "admin":
+                    return {"msg": "You are not allowed to do this action"}, 401
+                if data.get("productId") is None or data.get("productId") == "":
+                    return {"msg": "No productId provided"}, 401
+                put_product(data.get("productId"),
+                            data.get("name") if data.get("name") is not None else None,
+                            data.get("price") if data.get("price") is not None else None,
+                            data.get("tva") if data.get("tva") is not None else None,
+                            data.get("description") if data.get("description") is not None else None,
+                            data.get("stock") if data.get("stock") is not None else None,
+                            data.get("picture") if data.get("picture") is not None else None)
+            except (DecodeError, ExpiredSignatureError):
+                return {"msg": "Authentication required"}, 401
+
+# ----------------- Controller resources -----------------
+# Account
+api.add_resource(Account, '/api/account')
+api.add_resource(AccountAction, '/api/account/<string:action>/<int:userId>')
+# Product
+api.add_resource(Product, '/api/product', '/api/product/<int:productId>')
+
+
 def init_db():
     """
     Initialize the database. And add the admin user if not exist
     """
     with app.app_context():
         db.create_all()
+        if get_user(1) is None:
+            create_user("admin", "admin", "admin@admin.be", "admin")
 
 
 def get_app():
@@ -221,4 +288,4 @@ def run_server():
     Main function to run the server
     """
     init_db()
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8085, debug=True)

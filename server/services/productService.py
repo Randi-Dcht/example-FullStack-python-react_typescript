@@ -18,6 +18,11 @@ def get_product(productId):
     return product
 
 
+def get_list_products():
+    products = Product.query.all()
+    return products
+
+
 def put_product(productId, name, price, tva, description, stock, picture):
     product = Product.query.filter_by(id=productId).first()
     if name is not None:
