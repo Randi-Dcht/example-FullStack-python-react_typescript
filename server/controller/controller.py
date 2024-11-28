@@ -11,6 +11,7 @@ from flask_jwt_extended import (
 from flask_restful import Api, Resource
 from jwt import ExpiredSignatureError, DecodeError
 from models.models import db
+from services.commandService import create_command, add_product_to_command, finish_command
 from services.customerService import get_customer, put_customer, delete_customer, create_customer
 from services.productService import get_list_products, get_product, create_product, put_product, delete_product
 from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user, create_user
@@ -271,12 +272,43 @@ class Product(Resource):
                 return {"msg": "Authentication required"}, 401
 
 
+# ----------------- Controller Command -----------------
+class CommandController(Resource):
+    @jwt_required()
+    def post(self):
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            data = request.get_json()
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role != "customer":
+                return {"msg": "You are not allowed to do this action"}, 401
+            if data is None:
+                return {"msg": "No data provided"}, 400
+            if data.get("description") is None or data.get("description") == "":
+                return {"msg": "No description provided"}, 401
+            if data.get("products") is None or type(data.get("products")) is not list or len(data.get("products")) == 0:
+                return {"msg": "No products provided"}, 401
+            cmd = create_command(id_user, data.get("description"))
+            for product in data.get("products"):
+                if product.get("productId") is not None and product.get("quantity") is not None:
+                    add_product_to_command(cmd, product.get("productId"), product.get("quantity"))
+            finish_command(cmd)
+            return {"msg": "Command created"}, 200
+        except (DecodeError, ExpiredSignatureError):
+            return {"msg": "Authentication required"}, 401
+
+
 # ----------------- Controller resources -----------------
 # Account
 api.add_resource(Account, '/api/account')
 api.add_resource(AccountAction, '/api/account/<string:action>/<int:userId>')
 # Product
 api.add_resource(Product, '/api/product', '/api/product/<int:productId>')
+# Command
+api.add_resource(CommandController, '/api/command')
 
 
 def init_db():

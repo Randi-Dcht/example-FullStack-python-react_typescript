@@ -1,10 +1,9 @@
 from models.models import db, Command, CommandProduct
 
 
-def create_command(userId, date, description):
+def create_command(userId, description):
     command = Command(
         userId=userId,
-        date=date,
         description=description)
     db.session.add(command)
     db.session.commit()
@@ -79,7 +78,7 @@ def get_command(commandId):
     return {
         'id': command.id,
         'userId': command.userId,
-        'date': command.date,
+        'date': command.date.isoformat(),
         'status': command.status,
         'description': command.description,
         'price_total': 0,
@@ -94,3 +93,7 @@ def get_command(commandId):
             } for article in articles
         ]
     }
+
+# TODO : get_list_commands customer
+# TODO : get_list_commands worker
+# TODO : get_list_commands admin
