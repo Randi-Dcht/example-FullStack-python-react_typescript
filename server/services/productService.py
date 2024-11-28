@@ -19,8 +19,15 @@ def get_product(productId):
 
 
 def get_list_products():
-    products = Product.query.all()
+    products = Product.query.where(Product.stock > 0).all()
     return products
+
+
+def delete_product(productId):
+    product = Product.query.filter_by(id=productId).first()
+    product.stock = 0
+    db.session.commit()
+    return True
 
 
 def put_product(productId, name, price, tva, description, stock, picture):

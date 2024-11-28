@@ -12,7 +12,7 @@ from flask_restful import Api, Resource
 from jwt import ExpiredSignatureError, DecodeError
 from models.models import db
 from services.customerService import get_customer, put_customer, delete_customer, create_customer
-from services.productService import get_list_products, get_product, create_product, put_product
+from services.productService import get_list_products, get_product, create_product, put_product, delete_product
 from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user, create_user
 
 load_dotenv()
@@ -255,6 +255,21 @@ class Product(Resource):
                             data.get("picture") if data.get("picture") is not None else None)
             except (DecodeError, ExpiredSignatureError):
                 return {"msg": "Authentication required"}, 401
+
+        @jwt_required()
+        def delete(self, productId):
+            try:
+                verify_jwt_in_request()
+                id_user = get_jwt_identity()
+                user = get_user(id_user)
+                if user is None:
+                    return {"msg": "No user found"}, 401
+                if user.role != "admin":
+                    return {"msg": "You are not allowed to do this action"}, 401
+                delete_product(productId)
+            except (DecodeError, ExpiredSignatureError):
+                return {"msg": "Authentication required"}, 401
+
 
 # ----------------- Controller resources -----------------
 # Account
