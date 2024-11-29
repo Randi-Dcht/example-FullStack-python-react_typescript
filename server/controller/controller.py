@@ -280,7 +280,10 @@ def upload_image(productId):
     if file is None:
         return {"msg": "No file provided"}, 400
     try:
-        url, nameFile = upload_file_aws("","","","", file)
+        url, nameFile = upload_file_aws(os.getenv('AWS_ACCESS_KEY'),
+                                        os.getenv('AWS_SECRET_KEY'),
+                                        os.getenv('AWS_BUCKET_NAME'),
+                                        os.getenv('AWS_REGION'), file)
         put_image_product(productId, nameFile)
         return jsonify({'picture': url}), 200
     except Exception as e:
