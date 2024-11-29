@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask.cli import load_dotenv
 from flask_cors import CORS
 from flask_jwt_extended import (
@@ -15,8 +15,10 @@ from services.commandService import create_command, add_product_to_command, fini
     get_list_commands, get_list_commands_by_status, cancel_command, start_preparation_command, \
     finish_preparation_command
 from services.customerService import get_customer, put_customer, delete_customer, create_customer
-from services.productService import get_list_products, get_product, create_product, put_product, delete_product
+from services.productService import get_list_products, get_product, create_product, put_product, delete_product, \
+    put_image_product
 from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user, create_user
+from utils.awsS3 import upload_file_aws
 
 load_dotenv()
 
@@ -230,7 +232,7 @@ class ProductController(Resource):
             if data.get("stock") is None or data.get("stock") == "":
                 return {"msg": "No stock provided"}, 401
             create_product(data.get("name"), data.get("price"), data.get("tva"), data.get("description"),
-                           data.get("stock"), data.get("picture") if data.get("picture") is not None else None)
+                           data.get("stock"))
         except (DecodeError, ExpiredSignatureError):
             return {"msg": "Authentication required"}, 401
 
@@ -254,8 +256,7 @@ class ProductController(Resource):
                             data.get("price") if data.get("price") is not None else None,
                             data.get("tva") if data.get("tva") is not None else None,
                             data.get("description") if data.get("description") is not None else None,
-                            data.get("stock") if data.get("stock") is not None else None,
-                            data.get("picture") if data.get("picture") is not None else None)
+                            data.get("stock") if data.get("stock") is not None else None)
             except (DecodeError, ExpiredSignatureError):
                 return {"msg": "Authentication required"}, 401
 
@@ -272,6 +273,18 @@ class ProductController(Resource):
                 delete_product(productId)
             except (DecodeError, ExpiredSignatureError):
                 return {"msg": "Authentication required"}, 401
+
+@app.route("/api/product/image/<int:productId>", methods=["POST"])
+def upload_image(productId):
+    file = request.files['file']
+    if file is None:
+        return {"msg": "No file provided"}, 400
+    try:
+        url, nameFile = upload_file_aws("","","","", file)
+        put_image_product(productId, nameFile)
+        return jsonify({'picture': url}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 # ----------------- Controller Command -----------------

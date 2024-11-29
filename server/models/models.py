@@ -35,7 +35,7 @@ class Product(db.Model):
     tva = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
-    picture = db.Column(db.String(200), nullable=True)
+    picture = db.Column(db.String(200), default='none.png', nullable=False)
 
 
 class Command(db.Model):

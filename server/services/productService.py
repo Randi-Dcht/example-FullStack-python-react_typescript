@@ -1,13 +1,12 @@
 from models.models import db, Product
 
-def create_product(name, price, tva, description, stock, picture):
+def create_product(name, price, tva, description, stock):
     product = Product(
         name=name,
         price=price,
         tva=tva,
         description=description,
-        stock=stock,
-        picture=picture)
+        stock=stock)
     db.session.add(product)
     db.session.commit()
     return product.id
@@ -30,7 +29,7 @@ def delete_product(productId):
     return True
 
 
-def put_product(productId, name, price, tva, description, stock, picture):
+def put_product(productId, name, price, tva, description, stock):
     product = Product.query.filter_by(id=productId).first()
     if name is not None:
         product.name = name
@@ -42,7 +41,14 @@ def put_product(productId, name, price, tva, description, stock, picture):
         product.description = description
     if stock is not None and stock >= 0:
         product.stock = stock
-    if picture is not None:
-        product.picture = picture
+    db.session.commit()
+    return True
+
+
+def put_image_product(productId, picture):
+    product = Product.query.filter_by(id=productId).first()
+    if picture is None or product is None:
+        return False
+    product.picture = picture
     db.session.commit()
     return True
