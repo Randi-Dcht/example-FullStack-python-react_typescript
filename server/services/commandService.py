@@ -94,6 +94,21 @@ def get_command(commandId):
         ]
     }
 
-# TODO : get_list_commands customer
-# TODO : get_list_commands worker
-# TODO : get_list_commands admin
+
+def get_list_status():
+    return ['creation', 'waiting', 'preparation', 'cancellation', 'finish']
+
+
+def get_list_commands_by_user(userId):
+    commands = Command.query.filter_by(userId=userId).all()
+    return [get_command(command.id) for command in commands]
+
+
+def get_list_commands_by_status(status):
+    commands = Command.query.filter_by(status=status).all()
+    return [get_command(command.id) for command in commands]
+
+
+def get_list_commands():
+    commands = Command.query.order_by(Command.date).all()
+    return [get_command(command.id) for command in commands]

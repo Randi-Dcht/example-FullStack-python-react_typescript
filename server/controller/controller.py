@@ -11,7 +11,9 @@ from flask_jwt_extended import (
 from flask_restful import Api, Resource
 from jwt import ExpiredSignatureError, DecodeError
 from models.models import db
-from services.commandService import create_command, add_product_to_command, finish_command
+from services.commandService import create_command, add_product_to_command, finish_command, get_list_commands_by_user, \
+    get_list_commands, get_list_commands_by_status, cancel_command, start_preparation_command, \
+    finish_preparation_command
 from services.customerService import get_customer, put_customer, delete_customer, create_customer
 from services.productService import get_list_products, get_product, create_product, put_product, delete_product
 from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user, create_user
@@ -87,7 +89,7 @@ def signup():
                     data.get("street"))
     return {"msg": "User created"}, 200
 
-class Account(Resource):
+class AccountController(Resource):
     @jwt_required()
     def get(self):
         try:
@@ -175,7 +177,7 @@ class Account(Resource):
         except (DecodeError, ExpiredSignatureError):
             return {"msg": "Authentication required"}, 401
 
-class AccountAction(Resource):
+class AccountActionController(Resource):
     @jwt_required()
     def put(self, action, userId):
         try:
@@ -197,7 +199,7 @@ class AccountAction(Resource):
 
 
 # ----------------- Controller Product -----------------
-class Product(Resource):
+class ProductController(Resource):
     def get(self):
         return get_list_products(), 200
 
@@ -300,15 +302,71 @@ class CommandController(Resource):
         except (DecodeError, ExpiredSignatureError):
             return {"msg": "Authentication required"}, 401
 
+    @jwt_required()
+    def get(self):
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role == "customer":
+                return get_list_commands_by_user(id_user), 200
+            if user.role == "admin":
+                return get_list_commands(), 200
+            if user.role == "worker":
+                return {
+                    "list_waiting": get_list_commands_by_status("waiting"),
+                    "list_preparation": get_list_commands_by_status("preparation")
+                }, 200
+        except (DecodeError, ExpiredSignatureError):
+            return {"msg": "Authentication required"}, 401
+
+    @jwt_required()
+    def delete(self, commandId):
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role == "customer" or user.role == "admin":
+                return cancel_command(commandId), 200
+            else:
+                return {"msg": "You are not allowed to do this action"}, 401
+        except (DecodeError, ExpiredSignatureError):
+            return {"msg": "Authentication required"}, 401
+
+    @jwt_required()
+    def put(self, commandId, action):
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role == "worker" or user.role == "admin":
+                if action == "start_preparation":
+                    return start_preparation_command(commandId), 200
+                if action == "finish_preparation":
+                    return finish_preparation_command(commandId), 200
+            else:
+                return {"msg": "You are not allowed to do this action"}, 401
+        except (DecodeError, ExpiredSignatureError):
+            return {"msg": "Authentication required"}, 401
+
+
 
 # ----------------- Controller resources -----------------
 # Account
-api.add_resource(Account, '/api/account')
-api.add_resource(AccountAction, '/api/account/<string:action>/<int:userId>')
+api.add_resource(AccountController, '/api/account')
+api.add_resource(AccountActionController, '/api/account/<string:action>/<int:userId>')
 # Product
-api.add_resource(Product, '/api/product', '/api/product/<int:productId>')
+api.add_resource(ProductController, '/api/product', '/api/product/<int:productId>')
 # Command
-api.add_resource(CommandController, '/api/command')
+api.add_resource(CommandController, '/api/command',
+                 '/api/command/<int:commandId>',
+                 '/api/command/<int:commandId>/<string:action>')
 
 
 def init_db():
