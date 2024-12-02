@@ -375,7 +375,7 @@ class CommandController(Resource):
 # ----------------- Controller resources -----------------
 # Account
 api.add_resource(AccountController, '/api/account')
-api.add_resource(AccountActionController, '/api/account/<string:action>/<int:userId>')
+api.add_resource(AccountActionController, '/api/account/<int:userId>/<string:action>')
 # Product
 api.add_resource(ProductController, '/api/product',
                  '/api/product/<int:productId>')
