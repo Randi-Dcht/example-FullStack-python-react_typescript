@@ -27,7 +27,6 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URI')
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
-app.config["static_folder"] = os.getenv('STATIC_FOLDER')
 CORS(app, resources={r"/*": {"origins": "*"}})
 api = Api(app)
 db.init_app(app)
@@ -378,7 +377,8 @@ class CommandController(Resource):
 api.add_resource(AccountController, '/api/account')
 api.add_resource(AccountActionController, '/api/account/<string:action>/<int:userId>')
 # Product
-api.add_resource(ProductController, '/api/product', '/api/product/<int:productId>')
+api.add_resource(ProductController, '/api/product',
+                 '/api/product/<int:productId>')
 # Command
 api.add_resource(CommandController, '/api/command',
                  '/api/command/<int:commandId>',

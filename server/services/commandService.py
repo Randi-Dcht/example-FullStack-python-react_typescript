@@ -1,4 +1,5 @@
 from models.models import db, Command, CommandProduct
+from services.productService import get_product
 
 
 def create_command(userId, description):
@@ -73,25 +74,13 @@ def finish_preparation_command(commandId):
 def get_command(commandId):
     command = Command.query.filter_by(id=commandId).first()
     articles = CommandProduct.query.filter_by(commandId=commandId).all()
-    # TODO : calculate the total price
-    # TODO : check with database, request to get the product name and price
     return {
         'id': command.id,
         'userId': command.userId,
         'date': command.date.isoformat(),
         'status': command.status,
         'description': command.description,
-        'price_total': 0,
-        'articles': [
-            {
-                'id': article.id,
-                'productId': article.productId,
-                'name': 'product name',
-                'quantity': article.quantity,
-                'price_unit': 0,
-                'price': 0
-            } for article in articles
-        ]
+        'articles': [get_product(article) for article in articles]
     }
 
 
