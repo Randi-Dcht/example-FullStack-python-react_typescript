@@ -34,7 +34,7 @@ export default function HomePage() {
                         className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
                         <div className="flex items-center justify-between">
                             <a href="#" className="-m-1.5 p-1.5">
-                                <span className="sr-only">Your Company</span>
+                                <span className="sr-only">La promsoc hamburger</span>
                                 <img className="h-8 w-auto"
                                      src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
                                      alt=""/>
@@ -70,7 +70,7 @@ export default function HomePage() {
                     <div className="hidden sm:mb-8 sm:flex sm:justify-center">
                         <div
                             className="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
-                            Connexion à mon <a href="#" className="font-semibold text-indigo-600"><span
+                            Connexion à mon <a href="/login" className="font-semibold text-indigo-600"><span
                             className="absolute inset-0" aria-hidden="true"></span> compte <span
                             aria-hidden="true">&rarr;</span></a>
                         </div>

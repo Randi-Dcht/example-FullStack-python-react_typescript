@@ -1,11 +1,15 @@
-import './styles/App.css'
-import HomePage from "./pages/HomePage.tsx";
+import HomePage from "./pages/root/HomePage.tsx";
+import {Route, Routes} from "react-router-dom";
+import LoginPage from "./pages/root/LoginPage.tsx";
 
-function App() {
-
+function App()
+{
   return (
     <>
-      <HomePage />
+      <Routes>
+            <Route path="/" element={<HomePage />}/>
+            <Route path="/login" element={<LoginPage />}/>
+      </Routes>
     </>
   )
 }
