@@ -70,21 +70,21 @@ def signup():
     if data is None:
         return {"msg": "No data provided"}, 400
     if data.get("username") is None or data.get("username") == "":
-        return {"msg": "No username provided"}, 401
+        return {"msg": "No username provided"}, 400
     if data.get("password") is None or data.get("password") == "":
-        return {"msg": "No password provided"}, 401
+        return {"msg": "No password provided"}, 400
     if data.get("email") is None or data.get("email") == "" or "@" not in data.get("email"):
-        return {"msg": "No email provided"}, 401
+        return {"msg": "No email provided"}, 400
     if data.get("postal_code") is None or data.get("postal_code") == "":
-        return {"msg": "No postal code provided"}, 401
+        return {"msg": "No postal code provided"}, 400
     if data.get("city") is None or data.get("city") == "":
-        return {"msg": "No city provided"}, 401
+        return {"msg": "No city provided"}, 400
     if data.get("country") is None or data.get("country") == "":
-        return {"msg": "No country provided"}, 401
+        return {"msg": "No country provided"}, 400
     if data.get("phone") is None or data.get("phone") == "":
-        return {"msg": "No phone provided"}, 401
+        return {"msg": "No phone provided"}, 400
     if data.get("street") is None or data.get("street") == "":
-        return {"msg": "No street provided"}, 401
+        return {"msg": "No street provided"}, 400
     create_customer(data.get("username"), data.get("password"), data.get("email"), "customer",
                     data.get("postal_code"), data.get("city"), data.get("country"), data.get("phone"),
                     data.get("street"))

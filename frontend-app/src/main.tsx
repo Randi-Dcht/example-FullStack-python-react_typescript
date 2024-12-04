@@ -4,6 +4,7 @@ import App from './App.tsx'
 import './styles/index.css'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
