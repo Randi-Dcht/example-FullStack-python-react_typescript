@@ -4,6 +4,7 @@ import {FieldValues, useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {InputForm} from "../../components/form/InputForm.tsx";
 import {signup} from "../../api.ts";
+import HeaderNav from "../../components/header/HeaderNav.tsx";
 
 
 
@@ -71,19 +72,24 @@ export default function SignUpPage()
         });
     }, [mutation]);
     return (
-        <div>
-            <Form onSubmit={handleSubmit(onSubmit)}>
-                <InputForm  required={true} type="text" name="username" label="Votre nom/prénom*" control={control}/>
-                <InputForm  required={true} type="text" name="email" label="Email*" control={control}/>
-                <InputForm  required={true} type="text" name="phone" label="Téléphone*" control={control}/>
-                <InputForm  required={true} type="text" name="city" label="Ville*" control={control}/>
-                <InputForm  required={true} type="text" name="street" label="Rue + numéro*" control={control}/>
-                <InputForm  required={true} type="number" name="postal_code" label="Code postal*" control={control}/>
-                <InputForm  required={true} type="text" name="country" label="Pays*" control={control}/>
-                <InputForm  required={true} type="password" name="password" label="Password*" control={control}/>
-                <Button variant="danger" type="submit">Créer mon compte</Button>
-            </Form>
-        </div>
+        <>
+            <HeaderNav showLogout={false}/>
+            <div className="m-7 p-7">
+                <h3 className="mb-5">Création d'un nouveau compte</h3>
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                    <InputForm required={true} type="text" name="username" label="Votre nom et prénom*"
+                               control={control}/>
+                    <InputForm required={true} type="text" name="email" label="Email*" control={control}/>
+                    <InputForm required={true} type="text" name="phone" label="Téléphone*" control={control}/>
+                    <InputForm required={true} type="text" name="city" label="Ville*" control={control}/>
+                    <InputForm required={true} type="text" name="street" label="Rue + numéro*" control={control}/>
+                    <InputForm required={true} type="number" name="postal_code" label="Code postal*" control={control}/>
+                    <InputForm required={true} type="text" name="country" label="Pays*" control={control}/>
+                    <InputForm required={true} type="password" name="password" label="Password*" control={control}/>
+                    <Button variant="info" type="submit">Créer mon compte</Button>
+                </Form>
+            </div>
+        </>
 
     );
 }
