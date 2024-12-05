@@ -73,7 +73,10 @@ def get_command(commandId):
         'date': command.date.isoformat(),
         'status': command.status,
         'description': command.description,
-        'articles': [get_product(article) for article in articles]
+        'articles': [{
+            'quantity': article.quantity,
+            'product': get_product(article.productId)
+        } for article in articles]
     }
 
 
