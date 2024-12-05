@@ -14,12 +14,25 @@ def create_product(name, price, tva, description, stock):
 
 def get_product(productId):
     product = Product.query.filter_by(id=productId).first()
-    return product
+    return {
+        'id': product.id,
+        'name': product.name,
+        'price': product.price,
+        'tva': product.tva,
+        'description': product.description,
+        'stock': product.stock,
+        'picture': product.picture
+    }
 
 
 def get_list_products():
     products = Product.query.where(Product.stock > 0).all()
-    return products
+    return [ get_product(product.id) for product in products]
+
+
+def get_all_products():
+    products = Product.query.all()
+    return [ get_product(product.id) for product in products]
 
 
 def delete_product(productId):
@@ -39,6 +52,15 @@ def put_product(productId, name, price, tva, description, stock):
         product.tva = tva
     if description is not None:
         product.description = description
+    if stock is not None and stock >= 0:
+        product.stock = stock
+    db.session.commit()
+    return True
+
+
+def put_stock_product(productId,quantity):
+    product = Product.query.filter_by(id=productId).first()
+    stock = product.stock - quantity
     if stock is not None and stock >= 0:
         product.stock = stock
     db.session.commit()

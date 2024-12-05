@@ -66,7 +66,7 @@ export interface productStructure
 }
 
 
-export interface orderStructure
+export interface orderStructureCmd
 {
     productId: number;
     quantity: number;
@@ -77,7 +77,7 @@ export interface orderStructure
 export interface orderCommandStructure
 {
     description: string;
-    products: orderStructure[];
+    products: orderStructureCmd[];
 }
 
 

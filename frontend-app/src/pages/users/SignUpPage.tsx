@@ -71,6 +71,8 @@ export default function SignUpPage()
             'phone': values.phone
         });
     }, [mutation]);
+
+
     return (
         <>
             <HeaderNav showLogout={false}/>

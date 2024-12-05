@@ -1,5 +1,5 @@
 from models.models import db, Command, CommandProduct
-from services.productService import get_product
+from services.productService import get_product, put_stock_product
 
 
 def create_command(userId, description):
@@ -20,6 +20,7 @@ def add_product_to_command(commandId, productId, quantity):
             quantity=quantity)
         db.session.add(commandProduct)
         db.session.commit()
+        put_stock_product(productId, quantity)
         return commandProduct.id
     return False
 
