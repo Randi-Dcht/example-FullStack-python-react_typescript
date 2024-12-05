@@ -53,18 +53,10 @@ def finish_command(commandId):
     return False
 
 
-def start_preparation_command(commandId):
-    command = Command.query.filter_by(id=commandId).first()
-    if command.status == 'waiting':
-        command.status = 'preparation'
-        db.session.commit()
-        return True
-    return False
-
 
 def finish_preparation_command(commandId):
     command = Command.query.filter_by(id=commandId).first()
-    if command.status == 'preparation':
+    if command.status == 'waiting':
         command.status = 'finish'
         db.session.commit()
         return True
@@ -86,7 +78,7 @@ def get_command(commandId):
 
 
 def get_list_status():
-    return ['creation', 'waiting', 'preparation', 'cancellation', 'finish']
+    return ['creation', 'waiting', 'cancellation', 'finish']
 
 
 def get_list_commands_by_user(userId):

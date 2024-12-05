@@ -86,7 +86,7 @@ export interface orderStructure
     id: number;
     userId: number;
     date: string;
-    status: "creation" | "waiting" | "preparation" | "cancellation" | "finish";
+    status: "creation" | "waiting" | "cancellation" | "finish";
     description: string;
     articles: productStructure[];
 }

@@ -12,7 +12,7 @@ from flask_restful import Api, Resource
 from jwt import ExpiredSignatureError, DecodeError
 from models.models import db
 from services.commandService import create_command, add_product_to_command, finish_command, get_list_commands_by_user, \
-    get_list_commands, get_list_commands_by_status, cancel_command, start_preparation_command, \
+    get_list_commands, get_list_commands_by_status, cancel_command, \
     finish_preparation_command
 from services.customerService import get_customer, put_customer, delete_customer, create_customer
 from services.productService import get_list_products, get_product, create_product, put_product, delete_product, \
@@ -338,10 +338,7 @@ class CommandController(Resource):
             if user.role == "admin":
                 return get_list_commands(), 200
             if user.role == "worker":
-                return {
-                    "list_waiting": get_list_commands_by_status("waiting"),
-                    "list_preparation": get_list_commands_by_status("preparation")
-                }, 200
+                return get_list_commands_by_status("waiting"), 200
         except (DecodeError, ExpiredSignatureError):
             return {"msg": "Authentication required"}, 401
 
@@ -369,9 +366,7 @@ class CommandController(Resource):
             if user is None:
                 return {"msg": "No user found"}, 401
             if user.role == "worker" or user.role == "admin":
-                if action == "start_preparation":
-                    return start_preparation_command(commandId), 200
-                if action == "finish_preparation":
+                if action == "finish":
                     return finish_preparation_command(commandId), 200
             else:
                 return {"msg": "You are not allowed to do this action"}, 401
