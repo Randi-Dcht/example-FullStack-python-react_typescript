@@ -1,9 +1,15 @@
+import {Button} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
+
 interface HeaderNavProps {
     showLogout: boolean;
 }
 
 export default function HeaderNav(props: HeaderNavProps)
 {
+
+    const navigate = useNavigate()
+
     return(
         <>
             <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
@@ -19,8 +25,12 @@ export default function HeaderNav(props: HeaderNavProps)
                 {
                 props.showLogout && (
                         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                            <a href="/login" className="text-sm/6 font-semibold text-gray-900">Commander <span
-                                aria-hidden="true">&rarr;</span></a>
+                            <Button variant="danger" className="p-2" onClick={() =>{
+                                localStorage.clear()
+                                navigate('/')
+                            }}>
+                                déconnexion
+                            </Button>
                         </div>
                     )
                 }

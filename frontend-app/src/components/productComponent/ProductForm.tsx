@@ -20,6 +20,7 @@ export default function ProductForm()
         mutationFn: postNewProduct,
         onSuccess: async () => {
             client.invalidateQueries({queryKey: ['product']}).then(r => console.log(r))
+            document.getElementById("formP")
         }
     })
 
@@ -36,7 +37,7 @@ export default function ProductForm()
     }, [mutation]);
     return (
         <div>
-            <Form onSubmit={handleSubmit(onSubmit)}>
+            <Form id="formP" onSubmit={handleSubmit(onSubmit)}>
                 <InputForm  required={true} type="text" name="name" label="Nom du produit*" control={control}/>
                 <InputForm  required={true} type="number" name="price" label="Prix/htva*" control={control}/>
                 <InputForm  required={true} type="number" name="tva" label="tva*" control={control}/>

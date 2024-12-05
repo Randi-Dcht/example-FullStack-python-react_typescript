@@ -21,7 +21,7 @@ def get_list_roles():
 
 
 def check_user(username, password):
-    user = LoginUser.query.filter_by(username=username).first()
+    user = LoginUser.query.filter_by(email=username).first()
     if user is None:
         return -1, None
     if user.password != password: # TODO check_password_hash(user.password, password):

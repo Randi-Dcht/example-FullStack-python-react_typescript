@@ -70,6 +70,7 @@ export interface orderStructure
 {
     productId: number;
     quantity: number;
+    price: number;
 }
 
 

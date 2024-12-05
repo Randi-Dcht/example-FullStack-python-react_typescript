@@ -16,7 +16,7 @@ from services.commandService import create_command, add_product_to_command, fini
     finish_preparation_command
 from services.customerService import get_customer, put_customer, delete_customer, create_customer
 from services.productService import get_list_products, get_product, create_product, put_product, delete_product, \
-    put_image_product
+    put_image_product, get_all_products
 from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user, create_user
 from utils.awsS3 import upload_file_aws
 
@@ -61,7 +61,6 @@ def login():
         return {"msg": "error connexion"}, 401
     access_token = create_access_token(identity=user)
     return {"access_token": access_token,
-            "refresh_token": "refresh_token",
             "type": role}, 200
 
 @app.post("/api/signup")
@@ -201,11 +200,20 @@ class AccountActionController(Resource):
 
 # ----------------- Controller Product -----------------
 class ProductController(Resource):
-    def get(self):
-        return get_list_products(), 200
 
-    def get(self, productId):
-        return get_product(productId), 200
+    @jwt_required()
+    def get(self):
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role == "admin":
+                return get_all_products(), 200
+            return get_list_products(), 200
+        except (DecodeError, ExpiredSignatureError):
+            return {"msg": "Authentication required"}, 401
 
     @jwt_required()
     def post(self):

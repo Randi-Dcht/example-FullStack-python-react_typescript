@@ -70,7 +70,7 @@ export default function HomePage() {
                     <div className="hidden sm:mb-8 sm:flex sm:justify-center">
                         <div
                             className="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
-                            Connexion à mon <a href="/login" className="font-semibold text-indigo-600"><span
+                            Création d'un <a href="/signup" className="font-semibold text-indigo-600"><span
                             className="absolute inset-0" aria-hidden="true"></span> compte <span
                             aria-hidden="true">&rarr;</span></a>
                         </div>
@@ -83,7 +83,7 @@ export default function HomePage() {
                             Nous sommes une entreprise de restauration rapide qui propose des hamburgers de qualité à La Louvière.
                         </p>
                         <div className="mt-10 flex items-center justify-center gap-x-6">
-                            <a href="#" className="text-sm/6 font-semibold text-gray-900">Commander <span
+                            <a href="/login" className="text-sm/6 font-semibold text-gray-900">Commander <span
                                 aria-hidden="true">→</span></a>
                         </div>
                     </div>
