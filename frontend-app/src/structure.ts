@@ -88,5 +88,8 @@ export interface orderStructure
     date: string;
     status: "creation" | "waiting" | "cancellation" | "finish";
     description: string;
-    articles: productStructure[];
+    articles: {
+        quantity: number;
+        product: productStructure;
+    }[];
 }

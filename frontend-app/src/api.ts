@@ -115,7 +115,7 @@ export async function getCommand()
 {
     return request.get('/command')
 }
-export async function putStatusOfCommand(commandId: number, status: "start_preparation" | "finish_preparation")
+export async function putStatusOfCommand(commandId: number, status: "cancellation" | "finish")
 {
     return request.put('/command/' + commandId + '/' + status)
 }
