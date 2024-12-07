@@ -46,13 +46,13 @@ def put_product(productId, name, price, tva, description, stock):
     product = Product.query.filter_by(id=productId).first()
     if name is not None:
         product.name = name
-    if price is not None and price >= 0:
+    if price is not None and int(price) >= 0:
         product.price = price
-    if tva is not None and 0 <= tva <= 100:
+    if tva is not None and 0 <= int(tva) <= 100:
         product.tva = tva
     if description is not None:
         product.description = description
-    if stock is not None and stock >= 0:
+    if stock is not None and int(stock) >= 0:
         product.stock = stock
     db.session.commit()
     return True

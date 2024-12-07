@@ -1,6 +1,9 @@
 import os
 from datetime import timedelta
-from flask import Flask, request, jsonify
+from secrets import token_hex
+from tkinter import Image
+
+from flask import Flask, request, jsonify, send_file
 from flask.cli import load_dotenv
 from flask_cors import CORS
 from flask_jwt_extended import (
@@ -10,12 +13,13 @@ from flask_jwt_extended import (
 )
 from flask_restful import Api, Resource
 from jwt import ExpiredSignatureError, DecodeError
+from werkzeug.utils import secure_filename
 from models.models import db
 from services.commandService import create_command, add_product_to_command, finish_command, get_list_commands_by_user, \
     get_list_commands, get_list_commands_by_status, cancel_command, \
     finish_preparation_command
 from services.customerService import get_customer, put_customer, delete_customer, create_customer
-from services.productService import get_list_products, get_product, create_product, put_product, delete_product, \
+from services.productService import get_list_products, create_product, put_product, delete_product, \
     put_image_product, get_all_products
 from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user, create_user
 from utils.awsS3 import upload_file_aws
@@ -32,6 +36,9 @@ api = Api(app)
 db.init_app(app)
 jwt = JWTManager(app)
 
+
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 # ----------------- Controller API -----------------
@@ -227,74 +234,92 @@ class ProductController(Resource):
             if user is None:
                 return {"msg": "No user found"}, 401
             if user.role != "admin":
-                return {"msg": "You are not allowed to do this action"}, 401
+                return {"msg": "You are not allowed to do this action"}, 400
             if data.get("name") is None or data.get("name") == "":
-                return {"msg": "No name provided"}, 401
+                return {"msg": "No name provided"}, 400
             if data.get("price") is None or data.get("price") == "":
-                return {"msg": "No price provided"}, 401
+                return {"msg": "No price provided"}, 400
             if data.get("tva") is None or data.get("tva") == "":
-                return {"msg": "No tva provided"}, 401
+                return {"msg": "No tva provided"}, 400
             if data.get("description") is None or data.get("description") == "":
-                return {"msg": "No description provided"}, 401
+                return {"msg": "No description provided"}, 400
             if data.get("stock") is None or data.get("stock") == "":
-                return {"msg": "No stock provided"}, 401
+                return {"msg": "No stock provided"}, 400
             create_product(data.get("name"), data.get("price"), data.get("tva"), data.get("description"),
                            data.get("stock"))
         except (DecodeError, ExpiredSignatureError):
             return {"msg": "Authentication required"}, 401
 
-        @jwt_required()
-        def put(self):
-            try:
-                verify_jwt_in_request()
-                id_user = get_jwt_identity()
-                user = get_user(id_user)
-                data = request.get_json()
-                if data is None:
-                    return {"msg": "No data provided"}, 400
-                if user is None:
-                    return {"msg": "No user found"}, 401
-                if user.role != "admin":
-                    return {"msg": "You are not allowed to do this action"}, 401
-                if data.get("productId") is None or data.get("productId") == "":
-                    return {"msg": "No productId provided"}, 401
-                put_product(data.get("productId"),
-                            data.get("name") if data.get("name") is not None else None,
-                            data.get("price") if data.get("price") is not None else None,
-                            data.get("tva") if data.get("tva") is not None else None,
-                            data.get("description") if data.get("description") is not None else None,
-                            data.get("stock") if data.get("stock") is not None else None)
-            except (DecodeError, ExpiredSignatureError):
-                return {"msg": "Authentication required"}, 401
+    @jwt_required()
+    def put(self):
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            data = request.get_json()
+            if data is None:
+                return {"msg": "No data provided"}, 400
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role != "admin":
+                return {"msg": "You are not allowed to do this action"}, 401
+            if data.get("id") is None or data.get("id") == "":
+                return {"msg": "No productId provided"}, 400
+            put_product(data.get("id"),
+                        data.get("name") if data.get("name") is not None else None,
+                        data.get("price") if data.get("price") is not None else None,
+                        data.get("tva") if data.get("tva") is not None else None,
+                        data.get("description") if data.get("description") is not None else None,
+                        data.get("stock") if data.get("stock") is not None else None)
+        except (DecodeError, ExpiredSignatureError) as e:
+            print(e)
+            return {"msg": "Authentication required"}, 401
 
-        @jwt_required()
-        def delete(self, productId):
-            try:
-                verify_jwt_in_request()
-                id_user = get_jwt_identity()
-                user = get_user(id_user)
-                if user is None:
-                    return {"msg": "No user found"}, 401
-                if user.role != "admin":
-                    return {"msg": "You are not allowed to do this action"}, 401
-                delete_product(productId)
-            except (DecodeError, ExpiredSignatureError):
-                return {"msg": "Authentication required"}, 401
+    @jwt_required()
+    def delete(self, productId):
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role != "admin":
+                return {"msg": "You are not allowed to do this action"}, 401
+            delete_product(productId)
+        except (DecodeError, ExpiredSignatureError):
+            return {"msg": "Authentication required"}, 401
 
-@app.route("/api/product/image/<int:productId>", methods=["POST"])
-def upload_image(productId):
-    file = request.files['file']
-    if file is None:
-        return {"msg": "No file provided"}, 400
-    try:
-        url, nameFile = upload_file_aws(os.getenv('AWS_ACCESS_KEY'),
-                                        os.getenv('AWS_SECRET_KEY'),
-                                        os.getenv('AWS_BUCKET_NAME'),
-                                        os.getenv('AWS_REGION'), file)
-        put_image_product(productId, nameFile)
-        return jsonify({'picture': url}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+
+class ProductImgController(Resource):
+    @jwt_required()
+    def post(self, productid):
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role != "admin":
+                return {"msg": "You are not allowed to do this action"}, 400
+            print(request.files)
+            if 'file' not in request.files:
+                return {"error": "No file part"}, 400
+
+            file = request.files['file']
+            if file.filename == '':
+                return {"error": "No selected file"}, 400
+
+            filename = secure_filename(
+                token_hex(7) + '.' + file.filename
+            )
+
+            if file:
+                file_path = os.path.join(UPLOAD_FOLDER, filename)
+                file.save(file_path)
+                put_image_product(productid, filename)
+                return {"message": "Image processed and saved", "filename": filename}, 200
+        except (DecodeError, ExpiredSignatureError):
+            return {"msg": "Authentication required"}, 401
 
 
 # ----------------- Controller Command -----------------
@@ -374,6 +399,14 @@ class CommandController(Resource):
             return {"msg": "Authentication required"}, 401
 
 
+@app.route('/api/download/<filename>', methods=['GET'])
+def download_image(filename):
+    processed_path = os.path.join("../uploads/", filename)
+    if os.path.exists(processed_path):
+        return send_file(processed_path, mimetype='image/png')
+    else:
+        return {"error": "File not found"}, 404
+
 
 # ----------------- Controller resources -----------------
 # Account
@@ -382,6 +415,7 @@ api.add_resource(AccountActionController, '/api/account/<int:userId>/<string:act
 # Product
 api.add_resource(ProductController, '/api/product',
                  '/api/product/<int:productId>')
+api.add_resource(ProductImgController, '/api/product/image/<int:productid>')
 # Command
 api.add_resource(CommandController, '/api/command',
                  '/api/command/<int:commandId>',

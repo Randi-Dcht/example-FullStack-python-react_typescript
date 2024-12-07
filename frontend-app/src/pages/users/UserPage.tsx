@@ -5,6 +5,7 @@ import ProductCustomer from "../../components/productComponent/ProductCustomer.t
 import HeaderNav from "../../components/header/HeaderNav.tsx";
 import {useState} from "react";
 import CardComponent from "../../components/userComponent/CardComponent.tsx";
+import {Row} from "react-bootstrap";
 
 
 export default function UserPage()
@@ -24,12 +25,17 @@ export default function UserPage()
                 <div className="alert alert-dark" role="alert">
                     <CardComponent listCmd={listProduct}/>
                 </div>
-                {
-                    isSuccess && data.data.map((product: productStructure) => {
-                        return (<ProductCustomer key={product.id} product={product} listProduct={listProduct}
-                                                 setListProduct={setListProduct}/>)
-                    })
-                }
+                <Row>
+                    {
+                        isSuccess && data.data.map((product: productStructure) => {
+                            return (<ProductCustomer key={product.id} product={product} listProduct={listProduct}
+                                                     setListProduct={setListProduct}/>)
+                        })
+                    }
+                </Row>
+                <div>
+
+                </div>
             </div>
         </>
     )
