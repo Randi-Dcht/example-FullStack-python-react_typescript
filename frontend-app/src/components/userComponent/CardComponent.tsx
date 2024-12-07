@@ -1,17 +1,16 @@
 import {orderStructureCmd} from "../../structure.ts";
 import {Button} from "react-bootstrap";
 import {useMutation} from "@tanstack/react-query";
-import {useNavigate} from "react-router-dom";
 import {postNewCommand} from "../../api.ts";
 
 interface CardComponentProps
 {
     listCmd: orderStructureCmd[];
+    setConfirm: (confirm: boolean) => void;
 }
 
 export default function CardComponent(data: CardComponentProps)
 {
-    const navigate = useNavigate()
 
     const {mutate} = useMutation({
         mutationFn: () => postNewCommand(
@@ -24,7 +23,8 @@ export default function CardComponent(data: CardComponentProps)
             console.log("error")
         },
         onSuccess: () => {
-            navigate("/")
+            data.setConfirm(true)
+            data.listCmd = []
         }
     });
 

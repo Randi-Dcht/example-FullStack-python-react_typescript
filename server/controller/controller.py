@@ -1,9 +1,7 @@
 import os
 from datetime import timedelta
 from secrets import token_hex
-from tkinter import Image
-
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, send_file
 from flask.cli import load_dotenv
 from flask_cors import CORS
 from flask_jwt_extended import (
@@ -22,7 +20,6 @@ from services.customerService import get_customer, put_customer, delete_customer
 from services.productService import get_list_products, create_product, put_product, delete_product, \
     put_image_product, get_all_products
 from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user, create_user
-from utils.awsS3 import upload_file_aws
 
 load_dotenv()
 
@@ -56,6 +53,10 @@ def hello():
 # ----------------- Controller Account -----------------
 @app.post("/api/login")
 def login():
+    """
+    Login function to get the access token
+    :return: access token
+    """
     data = request.get_json()
     if data is None:
         return {"msg": "No data provided"}, 400
@@ -72,6 +73,10 @@ def login():
 
 @app.post("/api/signup")
 def signup():
+    """
+    Sign up function to create a new user (only customer)
+    :return: message
+    """
     data = request.get_json()
     if data is None:
         return {"msg": "No data provided"}, 400
@@ -99,6 +104,10 @@ def signup():
 class AccountController(Resource):
     @jwt_required()
     def get(self):
+        """
+        Get the user information
+        :return: json of the user
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -118,6 +127,10 @@ class AccountController(Resource):
 
     @jwt_required()
     def put(self):
+        """
+        Update the user information
+        :return: message
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -145,6 +158,10 @@ class AccountController(Resource):
 
     @jwt_required()
     def delete(self):
+        """
+        Delete the user
+        :return: message
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -162,6 +179,10 @@ class AccountController(Resource):
 
     @jwt_required()
     def post(self):
+        """
+        Create a new user (admin or worker) !!(only admin)!!
+        :return: message
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -187,6 +208,12 @@ class AccountController(Resource):
 class AccountActionController(Resource):
     @jwt_required()
     def put(self, action, userId):
+        """
+        Enable or disable a user !!(only admin)!!
+        :param action:
+        :param userId:
+        :return: message
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -210,6 +237,10 @@ class ProductController(Resource):
 
     @jwt_required()
     def get(self):
+        """
+        Get the list of products
+        :return: list of products
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -224,6 +255,10 @@ class ProductController(Resource):
 
     @jwt_required()
     def post(self):
+        """
+        Create a new product !!(only admin)!!
+        :return: message
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -252,6 +287,10 @@ class ProductController(Resource):
 
     @jwt_required()
     def put(self):
+        """
+        Update a product !!(only admin)!!
+        :return: message
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -277,6 +316,12 @@ class ProductController(Resource):
 
     @jwt_required()
     def delete(self, productId):
+        """
+        Delete a product !!(only admin)!!
+        A product can't be deleted if it is in a command, the stock will be set to 0
+        :param productId:
+        :return: message
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -293,6 +338,11 @@ class ProductController(Resource):
 class ProductImgController(Resource):
     @jwt_required()
     def post(self, productid):
+        """
+        Upload an image for a product !!(only admin)!!
+        :param productid:
+        :return: name of the image
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -326,6 +376,10 @@ class ProductImgController(Resource):
 class CommandController(Resource):
     @jwt_required()
     def post(self):
+        """
+        Create a new command !!(only customer)!!
+        :return: message
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -352,6 +406,10 @@ class CommandController(Resource):
 
     @jwt_required()
     def get(self):
+        """
+        Get the list of commands
+        :return: JSON object of the commands
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -369,6 +427,11 @@ class CommandController(Resource):
 
     @jwt_required()
     def delete(self, commandId):
+        """
+        Cancel a command
+        :param commandId:
+        :return: message
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -384,6 +447,12 @@ class CommandController(Resource):
 
     @jwt_required()
     def put(self, commandId, action):
+        """
+        Finish a command (only worker or admin) or finish the preparation of a command (only worker)
+        :param commandId:
+        :param action:
+        :return: message
+        """
         try:
             verify_jwt_in_request()
             id_user = get_jwt_identity()
@@ -401,6 +470,11 @@ class CommandController(Resource):
 
 @app.route('/api/download/<filename>', methods=['GET'])
 def download_image(filename):
+    """
+    Download an image from the server
+    :param filename:
+    :return: image
+    """
     processed_path = os.path.join("../uploads/", filename)
     if os.path.exists(processed_path):
         return send_file(processed_path, mimetype='image/png')

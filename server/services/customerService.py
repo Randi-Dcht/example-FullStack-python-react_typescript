@@ -3,6 +3,19 @@ from services.userService import get_user, create_user, put_user, delete_user
 
 
 def create_customer(username, password, email, role, postal_code, city, country, phone, street):
+    """
+    Create a customer
+    :param username:
+    :param password:
+    :param email:
+    :param role:
+    :param postal_code:
+    :param city:
+    :param country:
+    :param phone:
+    :param street:
+    :return: userId of the customer created or -1 if an error occurred
+    """
     userId = create_user(username, password, email, role)
     if userId == -1:
         return -1
@@ -19,6 +32,11 @@ def create_customer(username, password, email, role, postal_code, city, country,
 
 
 def get_customer(userId):
+    """
+    Get the customer
+    :param userId:
+    :return: JSON object of the customer
+    """
     customer = Customer.query.filter_by(user_id=userId).first()
     logi = get_user(userId)
     return {
@@ -35,6 +53,17 @@ def get_customer(userId):
 
 
 def put_customer(userId, postal_code, city, country, phone, street, username, email):
+    """
+    Update the customer
+    :param userId:
+    :param postal_code:
+    :param city:
+    :param country:
+    :param phone:
+    :param street:
+    :param username:
+    :param email:
+    """
     customer = Customer.query.filter_by(user_id=userId).first()
     put_user(userId, username, email)
     if postal_code is not None:
@@ -51,6 +80,10 @@ def put_customer(userId, postal_code, city, country, phone, street, username, em
 
 
 def delete_customer(userId):
+    """
+    Delete the customer
+    :param userId:
+    """
     customer = Customer.query.filter_by(user_id=userId).first()
     db.session.delete(customer)
     db.session.commit()

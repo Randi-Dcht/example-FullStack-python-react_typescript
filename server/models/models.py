@@ -5,6 +5,10 @@ db = SQLAlchemy()
 
 
 class LoginUser(db.Model):
+    """
+    LoginUser
+    Table to store the users of the application (admin, customer, worker)
+    """
     __tablename__ = 'login_users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
@@ -17,6 +21,10 @@ class LoginUser(db.Model):
 
 
 class Customer(db.Model):
+    """
+    Customer
+    Table to store the customers of the application (linked to a user)
+    """
     __tablename__ = 'customers'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('login_users.id'), nullable=False)
@@ -28,6 +36,10 @@ class Customer(db.Model):
 
 
 class Product(db.Model):
+    """
+    Product
+    Table to store the products of the application
+    """
     __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
@@ -39,6 +51,10 @@ class Product(db.Model):
 
 
 class Command(db.Model):
+    """
+    Command
+    Table to store the commands of the application (metadata ; linked to a user)
+    """
     __tablename__ = 'commands'
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, db.ForeignKey('login_users.id'), nullable=False)
@@ -48,6 +64,10 @@ class Command(db.Model):
 
 
 class CommandProduct(db.Model):
+    """
+    Command Product
+    Table to store the products of a command (linked to a command and a product)
+    """
     __tablename__ = 'command_products'
     id = db.Column(db.Integer, primary_key=True)
     commandId = db.Column(db.Integer, db.ForeignKey('commands.id'), nullable=False)
