@@ -5,6 +5,7 @@ import SignUpPage from "./pages/users/SignUpPage.tsx";
 import AdminPage from "./pages/admin/AdminPage.tsx";
 import UserPage from "./pages/users/UserPage.tsx";
 import WorkerPage from "./pages/workers/WorkerPage.tsx";
+import CommandUsersPage from "./pages/users/CommandUsersPage.tsx";
 
 function App()
 {
@@ -17,6 +18,7 @@ function App()
 
           <Route path={"/admin"} element={<AdminPage/>}/>
           <Route path={"/customer"} element={<UserPage/>}/>
+          <Route path={"/customer/command"} element={<CommandUsersPage/>}/>
           <Route path={"/worker"} element={<WorkerPage/>}/>
       </Routes>
     </>

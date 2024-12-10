@@ -53,6 +53,17 @@ def get_user(userId):
     """
     Get the user
     :param userId:
+    :return: Object of the user
+    """
+    user = LoginUser.query.filter_by(id=userId).first()
+    return user
+
+
+
+def get_user_info(userId):
+    """
+    Get the user
+    :param userId:
     :return: JSON object of the user
     """
     user = LoginUser.query.filter_by(id=userId).first()
