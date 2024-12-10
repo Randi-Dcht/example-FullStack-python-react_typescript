@@ -25,7 +25,7 @@ export default function UserForm()
     const mutation = useMutation({
         mutationFn: createInternalAccount,
         onSuccess: async () => {
-            client.invalidateQueries({queryKey: ['product']}).then(r => console.log(r))
+            client.invalidateQueries({queryKey: ['user']}).then(r => console.log(r))
         }
     })
 
@@ -76,16 +76,18 @@ export default function UserForm()
             <Controller
                 name="role"
                 control={control}
-                render={({field, fieldState}) => {
+                render={({field}) => {
                     return <Form.Group>
                         <Form.Label>Role</Form.Label>
-                        <Form.Control type="text" value={field.value} onChange={field.onChange} required={false} min={1} max={100}/>
-                        <p style={{color: 'red'}}>{fieldState.error?.message}</p>
+                        <Form.Select value={field.value} onChange={field.onChange}>
+                            <option key="worker" value="worker">Travailleur</option>
+                            <option key="admin" value="admin">Admin</option>
+                        </Form.Select>
                     </Form.Group>
                 }}
             />
 
-            <Button variant="warning" type="submit">
+            <Button className="mt-3" variant="warning" type="submit">
                 Ajouter un travailleur
             </Button>
 

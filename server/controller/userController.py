@@ -7,8 +7,7 @@ from flask_restful import  Resource
 from jwt import ExpiredSignatureError, DecodeError
 from services.customerService import get_customer, put_customer, delete_customer, create_customer
 from services.userService import check_user, get_user, put_user, delete_user, disable_user, enable_user, create_user, \
-    get_user_info
-
+    get_user_info, get_list_users
 
 
 class LoginController(Resource):
@@ -96,10 +95,8 @@ class AccountController(Resource):
             user = get_user(id_user)
             if user is None:
                 return {"msg": "No user found"}, 401
-            if user.role == "admin" or user.role == "worker":
-                return get_user_info(id_user), 200
-            if user.role == "customer":
-                return get_customer(id_user), 200
+            if user.role == "admin" :
+                return get_list_users(), 200
         except (DecodeError, ExpiredSignatureError):
             return {"msg": "Authentication required"}, 401
 

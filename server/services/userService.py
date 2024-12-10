@@ -59,6 +59,15 @@ def get_user(userId):
     return user
 
 
+def get_list_users():
+    """
+    Get the list of users
+    :return: list of JSON users
+    """
+    users = LoginUser.query.all()
+    return [get_user_info(user.id) for user in users]
+
+
 
 def get_user_info(userId):
     """
