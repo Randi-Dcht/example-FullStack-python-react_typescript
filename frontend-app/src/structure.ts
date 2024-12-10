@@ -25,7 +25,7 @@ export interface registerAdminStructure
     username: string;
     password: string;
     email: string;
-    role: "admin" | "worker";
+    role: string;
 }
 
 

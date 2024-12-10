@@ -33,6 +33,26 @@ class LoginController(Resource):
 
 
 class RegisterController(Resource):
+    @jwt_required()
+    def get(self):
+        """
+        Get the user information
+        :return: json of the user
+        """
+        try:
+            verify_jwt_in_request()
+            id_user = get_jwt_identity()
+            user = get_user(id_user)
+            if user is None:
+                return {"msg": "No user found"}, 401
+            if user.role == "admin" or user.role == "worker":
+                return get_user_info(id_user), 200
+            if user.role == "customer":
+                return get_customer(id_user), 200
+        except (DecodeError, ExpiredSignatureError):
+            return {"msg": "Authentication required"}, 401
+
+
     def post(self):
         """
         Register a new customer

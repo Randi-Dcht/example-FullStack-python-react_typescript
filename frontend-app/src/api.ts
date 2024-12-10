@@ -65,7 +65,7 @@ export async function signup(signUpData : registerStructure)
 
 
 // Account
-export async function getAccount()
+export async function getListAccount()
 {
     return request.get('/account')
 }
@@ -84,6 +84,10 @@ export async function createInternalAccount(accountData: registerAdminStructure 
 export async function putActionAccount(action: string, userId: number)
 {
     return request.put('/account/' + userId + '/' + action)
+}
+export async function getAccount()
+{
+    return request.get('/signup')
 }
 
 

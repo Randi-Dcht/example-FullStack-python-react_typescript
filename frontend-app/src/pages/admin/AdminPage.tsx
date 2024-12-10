@@ -7,6 +7,7 @@ import {productStructure} from "../../structure.ts";
 import {useState} from "react";
 import CommandComponent from "../../components/command/CommandComponent.tsx";
 import {Button} from "react-bootstrap";
+import UserForm from "../../components/userComponent/UserForm.tsx";
 
 export default function AdminPage()
 {
@@ -58,7 +59,11 @@ export default function AdminPage()
                     </div>
                 </div>
                 <div className={tab === "user" ? "tab-pane fade show active" : "tab-pane fade"} id="nav-user"
-                     role="tabpanel" aria-labelledby="nav-user" tabIndex={0}>2
+                     role="tabpanel" aria-labelledby="nav-user" tabIndex={0}>
+                    <div className="m-6 border-2 p-1.5">
+                        <h2 className="mb-5">Ajouter un travailleur</h2>
+                        <UserForm/>
+                    </div>
                 </div>
                 <div className={tab === "cmd" ? "tab-pane fade show active" : "tab-pane fade"} id="nav-cmd"
                      role="tabpanel" aria-labelledby="nav-cmd" tabIndex={0}>
