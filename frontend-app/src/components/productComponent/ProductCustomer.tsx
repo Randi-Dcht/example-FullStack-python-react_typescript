@@ -45,7 +45,15 @@ export default function ProductCustomer(data: ProductPanelAdminProps)
                             setQuantity(parseInt(e.target.value))
                         }}/>
                         <Button variant="light" onClick={() => {
-                            data.setListProduct([...data.listProduct,
+                            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                            data.listProduct.find((product) => {
+                                return product.product.id === data.product.id
+                            }) ? data.setListProduct(data.listProduct.map((product) => {
+                                if (product.product.id === data.product.id) {
+                                    product.quantity += quantity
+                                }
+                                return product
+                            })) : data.setListProduct([...data.listProduct,
                                 {
                                     product: data.product,
                                     quantity: quantity,
