@@ -74,6 +74,14 @@ export interface orderStructureCmd
 }
 
 
+export interface cardStructure
+{
+    product: productStructure;
+    quantity: number;
+    price: number;
+}
+
+
 export interface orderCommandStructure
 {
     description: string;

@@ -1,48 +1,34 @@
-import {useQuery} from "@tanstack/react-query";
-import {getProduct} from "../../api.ts";
-import {orderStructureCmd, productStructure} from "../../structure.ts";
-import ProductCustomer from "../../components/productComponent/ProductCustomer.tsx";
+
+import {cardStructure} from "../../structure.ts";
 import HeaderNav from "../../components/header/HeaderNav.tsx";
 import {useState} from "react";
-import CardComponent from "../../components/userComponent/CardComponent.tsx";
-import {Row} from "react-bootstrap";
+import UserPageCommand from "../../components/userComponent/UserPageCommand.tsx";
+import CardListingComponent from "../../components/card/CardListingComponent.tsx";
 import {Link} from "react-router-dom";
 
 
 export default function UserPage()
 {
-    const {data, isSuccess} = useQuery({
-        queryKey: ['product'],
-        queryFn: getProduct
-    });
 
-    const [listProduct, setListProduct] = useState<orderStructureCmd[]>([]);
-    const [successCommand, setSuccessCommand] = useState<boolean>(false);
+    const [listProduct, setListProduct] = useState<cardStructure[]>([]);
+    const [statePage, setStatePage] = useState<number>(0);
 
     return(
         <>
             <HeaderNav showLogout={true}/>
-            <h2 className="m-3">Je commande mes produits</h2>
             {
-                successCommand ? (
-                    <div>
-                        <h3 className="m-10 text-green-600">Command envoyée avec succès, Merci pour votre commande</h3>
-                        <Link to="/customer/command" className="m-10">Voir mes commandes</Link>
-                    </div>
-                ) : (
-                    <div className="m-6 border-2 p-1.5">
-                        <div className="alert alert-dark" role="alert">
-                            <CardComponent setConfirm={setSuccessCommand} listCmd={listProduct}/>
-                        </div>
-                        <Row>
-                            {
-                                isSuccess && data.data.map((product: productStructure) => {
-                                    return (<ProductCustomer key={product.id} product={product} listProduct={listProduct}
-                                                             setListProduct={setListProduct}/>)
-                                })
-                            }
-                        </Row>
-                    </div>
+                statePage === 0 && <UserPageCommand listProduct={listProduct} setListProduct={setListProduct} setStatePage={setStatePage}/>
+            }
+            {
+                statePage === 1 && <CardListingComponent listCmd={listProduct} setStatePage={setStatePage} setListProduct={setListProduct}/>
+            }
+            {
+                statePage === 2 &&
+                (
+                    <>
+                        <h3>Merci pour votre commande</h3>
+                        <Link to="/customer/command" className="btn btn-primary">voir mon profile</Link>
+                    </>
                 )
             }
         </>

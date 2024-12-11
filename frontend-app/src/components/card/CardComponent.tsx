@@ -1,35 +1,18 @@
-import {orderStructureCmd} from "../../structure.ts";
+import {cardStructure} from "../../structure.ts";
 import {Button} from "react-bootstrap";
-import {useMutation} from "@tanstack/react-query";
-import {postNewCommand} from "../../api.ts";
+
 
 interface CardComponentProps
 {
-    listCmd: orderStructureCmd[];
-    setConfirm: (confirm: boolean) => void;
+    listCmd: cardStructure[];
+    setConfirm: (confirm: number) => void;
 }
 
 export default function CardComponent(data: CardComponentProps)
 {
 
-    const {mutate} = useMutation({
-        mutationFn: () => postNewCommand(
-            {
-                description: "commande",
-                products: data.listCmd
-            }
-        ),
-        onError: () => {
-            console.log("error")
-        },
-        onSuccess: () => {
-            data.setConfirm(true)
-            data.listCmd = []
-        }
-    });
-
     function launchAction(){
-        mutate()
+        data.setConfirm(1);
     }
 
     return(
@@ -49,7 +32,9 @@ export default function CardComponent(data: CardComponentProps)
                     }
                     €
                 </p>
-                <Button onClick={launchAction} disabled={data.listCmd.length == 0} variant="light">Valider la commande</Button>
+                <Button onClick={launchAction} disabled={data.listCmd.length == 0} variant="light">
+                    Voir panier
+                </Button>
             </div>
         </div>
     )

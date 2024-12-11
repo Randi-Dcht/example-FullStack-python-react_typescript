@@ -1,4 +1,4 @@
-import {orderStructureCmd, productStructure} from "../../structure.ts";
+import {cardStructure, productStructure} from "../../structure.ts";
 import {Button, Card, Col} from "react-bootstrap";
 import {useState} from "react";
 
@@ -6,8 +6,8 @@ interface ProductPanelAdminProps
 {
     product : productStructure;
     key: number;
-    setListProduct(listProduct: orderStructureCmd[]): void;
-    listProduct: orderStructureCmd[];
+    setListProduct(listProduct: cardStructure[]): void;
+    listProduct: cardStructure[];
 }
 
 export default function ProductCustomer(data: ProductPanelAdminProps)
@@ -47,7 +47,7 @@ export default function ProductCustomer(data: ProductPanelAdminProps)
                         <Button variant="light" onClick={() => {
                             data.setListProduct([...data.listProduct,
                                 {
-                                    productId: data.product.id,
+                                    product: data.product,
                                     quantity: quantity,
                                     price: price_tva
                                 }
