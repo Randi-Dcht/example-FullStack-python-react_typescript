@@ -5,6 +5,7 @@ import {useState} from "react";
 import UserPageCommand from "../../components/userComponent/UserPageCommand.tsx";
 import CardListingComponent from "../../components/card/CardListingComponent.tsx";
 import {Link} from "react-router-dom";
+import Footer from "../../components/footer/Footer.tsx";
 
 
 export default function UserPage()
@@ -31,6 +32,7 @@ export default function UserPage()
                     </>
                 )
             }
+            <Footer/>
         </>
     )
 }

@@ -29,9 +29,6 @@ function ListingOrder(order: orderStructure)
                 {
                     localStorage.getItem("type_user") === "worker" && (<ButtonCommandAction title="Terminer" actionName="finish" productId={order.id}/>)
                 }
-                {
-                    localStorage.getItem("type_user") === "admin" && order.status == "waiting" && (<ButtonCommandAction title="Annuler" actionName="cancellation" productId={order.id}/>)
-                }
             </td>
         </tr>
     )

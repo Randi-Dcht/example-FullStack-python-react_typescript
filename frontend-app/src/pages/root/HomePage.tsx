@@ -1,3 +1,5 @@
+import Footer from "../../components/footer/Footer.tsx";
+
 export default function HomePage() {
     return (
         <div className="bg-white">
@@ -95,6 +97,7 @@ export default function HomePage() {
                         className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"></div>
                 </div>
             </div>
+            <Footer/>
         </div>
 
     )

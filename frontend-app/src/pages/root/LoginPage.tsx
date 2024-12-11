@@ -5,6 +5,7 @@ import {loginStructure} from "../../structure.ts";
 import {useMutation} from "@tanstack/react-query";
 import {login} from "../../api.ts";
 import {Alert, Button} from "react-bootstrap";
+import Footer from "../../components/footer/Footer.tsx";
 
 export default function LoginPage()
 {
@@ -92,6 +93,8 @@ export default function LoginPage()
                     </p>
                 </div>
             </div>
+
+            <Footer/>
         </>
     )
 }

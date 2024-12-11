@@ -5,6 +5,7 @@ import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {InputForm} from "../../components/form/InputForm.tsx";
 import {signup} from "../../api.ts";
 import HeaderNav from "../../components/header/HeaderNav.tsx";
+import Footer from "../../components/footer/Footer.tsx";
 
 
 
@@ -91,6 +92,7 @@ export default function SignUpPage()
                     <Button variant="info" type="submit">Créer mon compte</Button>
                 </Form>
             </div>
+            <Footer/>
         </>
 
     );

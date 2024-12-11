@@ -2,6 +2,7 @@ import HeaderNav from "../../components/header/HeaderNav.tsx";
 import CommandComponent from "../../components/command/CommandComponent.tsx";
 import {ButtonGroup} from "react-bootstrap";
 import {Link} from "react-router-dom";
+import Footer from "../../components/footer/Footer.tsx";
 
 export default function CommandUsersPage()
 {
@@ -16,6 +17,7 @@ export default function CommandUsersPage()
                 </ButtonGroup>
                 <CommandComponent/>
             </div>
+            <Footer/>
         </>
     )
 }
