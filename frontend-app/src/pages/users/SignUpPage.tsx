@@ -1,17 +1,19 @@
 import {Button, Form} from "react-bootstrap";
 import {useCallback} from "react";
-import {FieldValues, useForm} from "react-hook-form";
+import {Controller, FieldValues, useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {InputForm} from "../../components/form/InputForm.tsx";
 import {signup} from "../../api.ts";
 import HeaderNav from "../../components/header/HeaderNav.tsx";
 import Footer from "../../components/footer/Footer.tsx";
+import {yupResolver} from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import {useNavigate} from "react-router-dom";
 
 
 
 export default function SignUpPage()
 {
-/*
+
     const schema = yup.object().shape(
         {
             username: yup.string()
@@ -44,19 +46,30 @@ export default function SignUpPage()
                 .min(8, "Password must be larger than 8 characters")
                 .max(50, "Password must be smaller than 50 characters"),
         });
-*/
+
     const {handleSubmit, control} = useForm({
         mode: "onBlur",
-        //resolver: yupResolver(schema),
+        resolver: yupResolver(schema),
+        defaultValues: {
+            'username': "",
+            'email': "",
+            'phone': "",
+            'city': "",
+            'street': "",
+            'country': "",
+            'postal_code': 0,
+            'password': ""
+        }
     })
 
-    //const navigate = useNavigate()
+    const navigate = useNavigate()
     const client = useQueryClient();
 
     const mutation = useMutation({
         mutationFn: signup,
         onSuccess: async () => {
             client.invalidateQueries({queryKey: ['register']}).then(r => console.log(r))
+            navigate("/login")
         }
     })
 
@@ -80,15 +93,94 @@ export default function SignUpPage()
             <div className="m-7 p-7">
                 <h3 className="mb-5">Création d'un nouveau compte</h3>
                 <Form onSubmit={handleSubmit(onSubmit)}>
-                    <InputForm required={true} type="text" name="username" label="Votre nom et prénom*"
-                               control={control}/>
-                    <InputForm required={true} type="text" name="email" label="Email*" control={control}/>
-                    <InputForm required={true} type="text" name="phone" label="Téléphone*" control={control}/>
-                    <InputForm required={true} type="text" name="city" label="Ville*" control={control}/>
-                    <InputForm required={true} type="text" name="street" label="Rue + numéro*" control={control}/>
-                    <InputForm required={true} type="number" name="postal_code" label="Code postal*" control={control}/>
-                    <InputForm required={true} type="text" name="country" label="Pays*" control={control}/>
-                    <InputForm required={true} type="password" name="password" label="Password*" control={control}/>
+                    <Controller
+                        name="username"
+                        control={control}
+                        render={({field, fieldState}) => {
+                            return <Form.Group>
+                                <Form.Label>Votre nom et prénom*</Form.Label>
+                                <Form.Control type="text" value={field.value} onChange={field.onChange} required={false} />
+                                <p style={{color: 'red'}}>{fieldState.error?.message}</p>
+                            </Form.Group>
+                        }}
+                    />
+                    <Controller
+                        name="email"
+                        control={control}
+                        render={({field, fieldState}) => {
+                            return <Form.Group>
+                                <Form.Label>Email*</Form.Label>
+                                <Form.Control type="text" value={field.value} onChange={field.onChange} required={false} />
+                                <p style={{color: 'red'}}>{fieldState.error?.message}</p>
+                            </Form.Group>
+                        }}
+                    />
+                    <Controller
+                        name="phone"
+                        control={control}
+                        render={({field, fieldState}) => {
+                            return <Form.Group>
+                                <Form.Label>Téléphone*</Form.Label>
+                                <Form.Control type="text" value={field.value} onChange={field.onChange} required={false} />
+                                <p style={{color: 'red'}}>{fieldState.error?.message}</p>
+                            </Form.Group>
+                        }}
+                    />
+                    <Controller
+                        name="city"
+                        control={control}
+                        render={({field, fieldState}) => {
+                            return <Form.Group>
+                                <Form.Label>Ville*</Form.Label>
+                                <Form.Control type="text" value={field.value} onChange={field.onChange} required={false} />
+                                <p style={{color: 'red'}}>{fieldState.error?.message}</p>
+                            </Form.Group>
+                        }}
+                    />
+                    <Controller
+                        name="street"
+                        control={control}
+                        render={({field, fieldState}) => {
+                            return <Form.Group>
+                                <Form.Label>Rue + numéro*</Form.Label>
+                                <Form.Control type="text" value={field.value} onChange={field.onChange} required={false} />
+                                <p style={{color: 'red'}}>{fieldState.error?.message}</p>
+                            </Form.Group>
+                        }}
+                    />
+                    <Controller
+                        name="postal_code"
+                        control={control}
+                        render={({field, fieldState}) => {
+                            return <Form.Group>
+                                <Form.Label>Code postal*</Form.Label>
+                                <Form.Control type="number" value={field.value} onChange={field.onChange} required={false} />
+                                <p style={{color: 'red'}}>{fieldState.error?.message}</p>
+                            </Form.Group>
+                        }}
+                    />
+                    <Controller
+                        name="country"
+                        control={control}
+                        render={({field, fieldState}) => {
+                            return <Form.Group>
+                                <Form.Label>Pays*</Form.Label>
+                                <Form.Control type="text" value={field.value} onChange={field.onChange} required={false} />
+                                <p style={{color: 'red'}}>{fieldState.error?.message}</p>
+                            </Form.Group>
+                        }}
+                    />
+                    <Controller
+                        name="password"
+                        control={control}
+                        render={({field, fieldState}) => {
+                            return <Form.Group>
+                                <Form.Label>Mot de passe*</Form.Label>
+                                <Form.Control type="password" value={field.value} onChange={field.onChange} required={false} />
+                                <p style={{color: 'red'}}>{fieldState.error?.message}</p>
+                            </Form.Group>
+                        }}
+                    />
                     <Button variant="info" type="submit">Créer mon compte</Button>
                 </Form>
             </div>
