@@ -8,7 +8,12 @@ interface ButtonCommandActionProps {
     productId: number;
 }
 
-
+/***
+    * @Description
+    * ButtonCommandAction is a component that displays a button to finish or cancel a command
+    * @param data
+    * @constructor
+  ***/
 export default function ButtonCommandAction(data: ButtonCommandActionProps)
 {
     const client = useQueryClient();

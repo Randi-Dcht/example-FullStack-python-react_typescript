@@ -8,6 +8,13 @@ interface CardComponentProps
     setConfirm: (confirm: number) => void;
 }
 
+
+/***
+    * @Description
+    * CardComponent is a component that displays the number of items in the cart and the total price of the cart
+    * @param data
+    * @constructor
+  ***/
 export default function CardComponent(data: CardComponentProps)
 {
 

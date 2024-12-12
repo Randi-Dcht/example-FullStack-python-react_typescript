@@ -4,6 +4,12 @@ import {ButtonGroup} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import Footer from "../../components/footer/Footer.tsx";
 
+
+/***
+ * @Description
+ * CommandUsersPage is a component that displays the commands of the user
+ * @constructor
+ ***/
 export default function CommandUsersPage()
 {
 

@@ -7,6 +7,12 @@ import {login} from "../../api.ts";
 import {Alert, Button} from "react-bootstrap";
 import Footer from "../../components/footer/Footer.tsx";
 
+
+/***
+ * @Description
+ * LoginPage is a component that displays the login page
+ * @constructor
+ ***/
 export default function LoginPage()
 {
     const [error, setError] = useState<string | undefined>(undefined);
@@ -36,7 +42,6 @@ export default function LoginPage()
         formData.password = password;
         mutate();
     };
-
 
 
     return (

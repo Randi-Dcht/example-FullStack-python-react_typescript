@@ -11,6 +11,14 @@ interface UserPageCommandProps {
     setStatePage(state: number): void;
 }
 
+
+/***
+ * @Component UserPageCommand
+ * @Description
+ * This component is used to display the list of products for the customer.
+ * @ReturnTypeDescription This component returns the JSX of the list of products for the customer.
+ * @param dataPrpos
+ */
 export default function UserPageCommand(dataPrpos: UserPageCommandProps)
 {
     const {data, isSuccess} = useQuery({

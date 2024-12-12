@@ -6,7 +6,11 @@ import {useCallback} from "react";
 import {registerAdminStructure} from "../../structure.ts";
 
 
-
+/***
+ * @Description
+ * UserForm is a component that displays the form to add a user
+ * @constructor
+ ***/
 export default function UserForm()
 {
     const {handleSubmit, control} = useForm({

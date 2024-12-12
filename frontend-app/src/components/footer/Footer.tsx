@@ -1,3 +1,11 @@
+
+/***
+    * @Component Footer
+    * @Description
+    * This component is used to display the footer of the website.
+    * It contains the company name, address and the year of creation.
+    * @ReturnTypeDescription This component returns the JSX of the footer.
+    */
 export default function Footer()
 {
     return(

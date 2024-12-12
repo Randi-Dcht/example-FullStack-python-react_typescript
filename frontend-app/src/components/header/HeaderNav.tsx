@@ -5,6 +5,13 @@ interface HeaderNavProps {
     showLogout: boolean;
 }
 
+/***
+ * @Component HeaderNav
+ * @Description
+ * This component is used to display the header of the website.
+ * @ReturnTypeDescription This component returns the JSX of the header.
+ * @param props
+ */
 export default function HeaderNav(props: HeaderNavProps)
 {
 

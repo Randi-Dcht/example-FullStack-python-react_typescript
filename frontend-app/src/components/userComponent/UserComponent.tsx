@@ -15,6 +15,12 @@ function ListingUser(users: accountStructure)
 }
 
 
+
+/***
+ * @Description
+ * UserComponent is a component that displays the list of users in table format
+ * @constructor
+ ***/
 export default function UserComponent()
 {
 

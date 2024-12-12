@@ -41,6 +41,12 @@ function ListingOrder(order: cardStructure, setListProduct: (listProduct: cardSt
     )
 }
 
+/***
+    * @Description
+    * CardListingComponent is a component that displays the list of items in the cart
+    * @param dataProps
+    * @constructor
+  ***/
 export default function CardListingComponent(dataProps: CardListingComponentProps)
 {
     const {mutate} = useMutation({

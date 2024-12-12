@@ -34,7 +34,11 @@ function ListingOrder(order: orderStructure)
     )
 }
 
-
+/***
+    * @Description
+    * CommandComponent is a component that displays the list of orders in table format
+    * @constructor
+  ***/
 export default function CommandComponent()
 {
 

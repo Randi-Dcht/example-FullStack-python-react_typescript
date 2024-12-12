@@ -1,5 +1,13 @@
 import Footer from "../../components/footer/Footer.tsx";
 
+
+/***
+ * @Component HomePage
+ * @Description
+ * This component is used to display the home page of the website.
+ * It contains the company name, address and the year of creation.
+ * @ReturnTypeDescription This component returns the JSX of the home page.
+ */
 export default function HomePage() {
     return (
         <div className="bg-white">

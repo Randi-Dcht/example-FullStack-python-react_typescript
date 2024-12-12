@@ -10,7 +10,11 @@ import * as yup from "yup";
 import {useNavigate} from "react-router-dom";
 
 
-
+/***
+ * @Description
+ * SignUpPage is a component that displays the sign-up page
+ * @constructor
+ ***/
 export default function SignUpPage()
 {
 

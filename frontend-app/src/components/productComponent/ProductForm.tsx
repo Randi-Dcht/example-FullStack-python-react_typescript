@@ -12,6 +12,14 @@ interface ProductFormProps
     updateForm: boolean;
 }
 
+
+/***
+ * @Component ProductForm
+ * @Description
+ * This component is used to display the form to add or update a product.
+ * @ReturnTypeDescription This component returns the JSX of the form to add or update a product.
+ * @param dataProps
+ */
 export default function ProductForm(dataProps: ProductFormProps)
 {
     const {handleSubmit, control} = useForm({

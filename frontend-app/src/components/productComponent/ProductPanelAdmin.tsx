@@ -8,6 +8,14 @@ interface ProductPanelAdminProps
     key: number;
 }
 
+
+/***
+ * @Component ProductPanelAdmin
+ * @Description
+ * This component is used to display the product for the admin.
+ * @ReturnTypeDescription This component returns the JSX of the product for the admin.
+ * @param data
+ */
 export default function ProductPanelAdmin(data: ProductPanelAdminProps)
 {
 

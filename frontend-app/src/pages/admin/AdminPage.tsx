@@ -10,6 +10,12 @@ import {Button} from "react-bootstrap";
 import UserForm from "../../components/userComponent/UserForm.tsx";
 import UserComponent from "../../components/userComponent/UserComponent.tsx";
 
+
+/***
+ * @Description
+ * AdminPage is a component that displays the administration page of the platform
+ * @constructor
+ ***/
 export default function AdminPage()
 {
     const {data, isSuccess} = useQuery({

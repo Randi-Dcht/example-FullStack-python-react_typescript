@@ -10,6 +10,14 @@ interface ProductPanelAdminProps
     listProduct: cardStructure[];
 }
 
+
+/***
+ * @Component ProductCustomer
+ * @Description
+ * This component is used to display the product for the customer.
+ * @ReturnTypeDescription This component returns the JSX of the product for the customer.
+ * @param data
+ */
 export default function ProductCustomer(data: ProductPanelAdminProps)
 {
 

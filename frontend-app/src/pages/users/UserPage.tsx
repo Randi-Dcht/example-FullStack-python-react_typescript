@@ -8,6 +8,12 @@ import {Link} from "react-router-dom";
 import Footer from "../../components/footer/Footer.tsx";
 
 
+/***
+ * @Component UserPage
+ * @Description
+ * This component is used to display the user page.
+ * @ReturnTypeDescription This component returns the JSX of the user page.
+ */
 export default function UserPage()
 {
 

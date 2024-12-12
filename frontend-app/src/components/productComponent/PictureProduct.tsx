@@ -8,6 +8,14 @@ interface PictureProductProps {
     picture: string;
 }
 
+
+/***
+ * @Component PictureProduct
+ * @Description
+ * This component is used to display the picture of a product.
+ * @ReturnTypeDescription This component returns the JSX of the picture of a product.
+ * @param dataProps
+ */
 export default function PictureProduct(dataProps: PictureProductProps)
 {
     const { register, handleSubmit } = useForm();
