@@ -26,7 +26,7 @@ class LoginController(Resource):
         user, role = check_user(data.get("name"), data.get("password"))
         if user == -1 or role is None:
             return {"msg": "error connexion"}, 401
-        access_token = create_access_token(identity=user)
+        access_token = create_access_token(identity=str(user))
         return {"access_token": access_token,
                 "type": role}, 200
 

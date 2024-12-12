@@ -1,3 +1,4 @@
+from werkzeug.security import check_password_hash, generate_password_hash
 from models.models import db, LoginUser
 
 
@@ -16,7 +17,7 @@ def create_user(username, password, email, role):
         return -1
     user = LoginUser(
         username=username,
-        password=password,
+        password=generate_password_hash(password),
         email=email,
         role=role)
     db.session.add(user)
@@ -42,7 +43,7 @@ def check_user(username, password):
     user = LoginUser.query.filter_by(email=username).first()
     if user is None:
         return -1, None
-    if user.password != password: # TODO check_password_hash(user.password, password):
+    if check_password_hash(user.password, password):
         return -1, None
     if not user.active:
         return -1, None

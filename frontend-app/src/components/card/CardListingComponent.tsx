@@ -16,7 +16,7 @@ function ListingOrder(order: cardStructure, setListProduct: (listProduct: cardSt
     return(
         <tr>
             <td>
-                <img src={"http://localhost:8085/api/download/" + order.product.picture} alt="image" width="80"
+                <img src={`${import.meta.env.VITE_API_URL}/api/download/` + order.product.picture} alt="image" width="80"
                      height="80"/>
             </td>
             <td>{order.product.name}</td>

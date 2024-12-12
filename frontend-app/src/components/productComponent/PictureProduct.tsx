@@ -19,14 +19,14 @@ interface PictureProductProps {
 export default function PictureProduct(dataProps: PictureProductProps)
 {
     const { register, handleSubmit } = useForm();
-    const [picture, setPicture] = useState<string>("http://localhost:8085/api/download/" + dataProps.picture);
+    const [picture, setPicture] = useState<string>(`${import.meta.env.VITE_API_URL}/api/download/` + dataProps.picture);
 
     const onSubmit = async (data:FieldValues) => {
         const formData = new FormData();
         formData.append('file', data.file[0]);
 
         try {
-            const response = await axios.post('http://localhost:8085/api/product/image/' + String(dataProps.productId), formData, {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/product/image/` + String(dataProps.productId), formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Accept': 'application/json',
@@ -36,7 +36,7 @@ export default function PictureProduct(dataProps: PictureProductProps)
             });
             if (response.status === 200)
             {
-                setPicture("http://localhost:8085/api/download/" + response.data.filename);
+                setPicture(`${import.meta.env.VITE_API_URL}/api/download/` + response.data.filename);
             }
         } catch (error) {
             console.error('Error uploading file:', error);

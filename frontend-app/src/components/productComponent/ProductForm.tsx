@@ -51,7 +51,7 @@ export default function ProductForm(dataProps: ProductFormProps)
                 formData.append('file', pictureData[0]);
 
                 try {
-                    axios.post('http://localhost:8085/api/product/image/' + String(data.data.id), formData, {
+                    axios.post(`${import.meta.env.VITE_API_URL}/api/product/image/` + String(data.data.id), formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                             'Accept': 'application/json',

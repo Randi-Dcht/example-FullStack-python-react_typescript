@@ -27,7 +27,7 @@ export default function ProductCustomer(data: ProductPanelAdminProps)
     return (
         <Col md={4} key={data.product.id} className="mb-4">
             <Card className="mt-3" style={{width: '18rem'}}>
-                <Card.Img variant="top"  height="150" src={"http://localhost:8085/api/download/" + data.product.picture}/>
+                <Card.Img variant="top"  height="150" src={`${import.meta.env.VITE_API_URL}/api/download/` + data.product.picture}/>
                 <Card.Body>
                     <Card.Title>{data.product.name}</Card.Title>
                     <Card.Text>

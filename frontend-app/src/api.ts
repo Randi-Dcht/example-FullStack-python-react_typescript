@@ -11,7 +11,7 @@ import {
 
 
 const request = axios.create({
-    baseURL: `http://localhost:8085/api`,
+    baseURL: `${import.meta.env.VITE_API_URL}/api`,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
