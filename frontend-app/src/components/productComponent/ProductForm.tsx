@@ -1,9 +1,10 @@
 import {Button, Form} from "react-bootstrap";
-import {useCallback} from "react";
+import {useCallback, useState} from "react";
 import {Controller, useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {postNewProduct, putProduct} from "../../api.ts";
 import {productStructure} from "../../structure.ts";
+import axios from "axios";
 
 interface ProductFormProps
 {
@@ -28,11 +29,34 @@ export default function ProductForm(dataProps: ProductFormProps)
 
     //const navigate = useNavigate()
     const client = useQueryClient();
+    const [pictureData, setPictureData] = useState<FileList | null>(null);
 
     const mutation = useMutation({
         mutationFn: dataProps.updateForm ? putProduct : postNewProduct,
-        onSuccess: async () => {
+        onSuccess: async (data) => {
             client.invalidateQueries({queryKey: ['product']}).then(r => console.log(r))
+            console.log(pictureData)
+
+            if (!dataProps.updateForm && pictureData !== null)
+            {
+                const formData = new FormData();
+                formData.append('file', pictureData[0]);
+
+                try {
+                    axios.post('http://localhost:8085/api/product/image/' + String(data.data.id), formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Accept': 'application/json',
+                            'Access-Control-Allow-Origin': '*',
+                            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                        },
+                    }).then(r => console.log(r));
+                }
+                catch (error)
+                {
+                    console.error('Error uploading file:', error);
+                }
+            }
         }
     })
 
@@ -49,14 +73,23 @@ export default function ProductForm(dataProps: ProductFormProps)
     }, [mutation]);
     return (
         <div>
+            {
+                !dataProps.updateForm && (<div className="flex items-center m-2">
+                    <p className="pt-2">Ajouter une image :</p>
+                    <input type="file" name="file" id="file" onChange={(event) => {
+                        setPictureData(event.target.files)
+                    }}/>
+                </div>)
+            }
             <Form id="formP" onSubmit={handleSubmit(onSubmit)}>
                 <Controller
                     name="id"
                     control={control}
                     render={({field, fieldState}) => {
                         return <Form.Group>
-                            <Form.Label>Produit ID</Form.Label>
-                            <Form.Control type="number" value={field.value} onChange={field.onChange} required={false} readOnly={true}/>
+                        <Form.Label>Produit ID</Form.Label>
+                            <Form.Control type="number" value={field.value} onChange={field.onChange} required={false}
+                                          readOnly={true}/>
                             <p style={{color: 'red'}}>{fieldState.error?.message}</p>
                         </Form.Group>
                     }}
@@ -89,7 +122,7 @@ export default function ProductForm(dataProps: ProductFormProps)
                     render={({field, fieldState}) => {
                         return <Form.Group>
                             <Form.Label>Produit prix/htva</Form.Label>
-                            <Form.Control type="number" value={field.value} onChange={field.onChange} required={false} />
+                            <Form.Control type="number" value={field.value} onChange={field.onChange} required={false}/>
                             <p style={{color: 'red'}}>{fieldState.error?.message}</p>
                         </Form.Group>
                     }}
@@ -100,7 +133,8 @@ export default function ProductForm(dataProps: ProductFormProps)
                     render={({field, fieldState}) => {
                         return <Form.Group>
                             <Form.Label>Produit TVA</Form.Label>
-                            <Form.Control type="number" value={field.value} onChange={field.onChange} required={false} min={1} max={100}/>
+                            <Form.Control type="number" value={field.value} onChange={field.onChange} required={false}
+                                          min={1} max={100}/>
                             <p style={{color: 'red'}}>{fieldState.error?.message}</p>
                         </Form.Group>
                     }}
@@ -111,7 +145,8 @@ export default function ProductForm(dataProps: ProductFormProps)
                     render={({field, fieldState}) => {
                         return <Form.Group>
                             <Form.Label>Produit stock</Form.Label>
-                            <Form.Control type="number" value={field.value} onChange={field.onChange} required={false} min={0}/>
+                            <Form.Control type="number" value={field.value} onChange={field.onChange} required={false}
+                                          min={0}/>
                             <p style={{color: 'red'}}>{fieldState.error?.message}</p>
                         </Form.Group>
                     }}
@@ -122,7 +157,9 @@ export default function ProductForm(dataProps: ProductFormProps)
                     }
                 </Button>
                 {
-                    dataProps.updateForm ? <Button disabled={dataProps.product?.stock==0} className="ml-2" variant="danger" type="submit">Supprimer le produit</Button> : null
+                    dataProps.updateForm ?
+                        <Button disabled={dataProps.product?.stock == 0} className="ml-2" variant="danger"
+                                type="submit">Supprimer le produit</Button> : null
                 }
             </Form>
         </div>

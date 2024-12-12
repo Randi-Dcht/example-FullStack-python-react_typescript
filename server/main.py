@@ -16,7 +16,6 @@ from services.userService import get_user, create_user
 
 load_dotenv()
 
-
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URI')
 app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
@@ -27,8 +26,7 @@ db.init_app(app)
 jwt = JWTManager(app)
 
 
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs('uploads', exist_ok=True)
 
 # ----------------- Controller API -----------------
 @app.route("/api")
@@ -47,7 +45,7 @@ def download_image(filename):
     :param filename:
     :return: image
     """
-    processed_path = os.path.join("/Users/randidevtech/Projects/private-git/ExampleFullStack/server/uploads/", filename)
+    processed_path = os.path.join("./uploads/", filename)
     if os.path.exists(processed_path):
         return send_file(processed_path, mimetype='image/png')
     else:
@@ -77,7 +75,7 @@ def init_db():
     with app.app_context():
         db.create_all()
         if get_user(1) is None:
-            create_user("admin", "admin", "admin@admin.be", "admin")
+            create_user(os.getenv('ADMIN_NAME'), os.getenv('ADMIN_PASSWORD'), os.getenv('ADMIN_EMAIL'), "admin")
 
 
 def get_app():
@@ -94,7 +92,7 @@ def run_server():
     Main function to run the server
     """
     init_db()
-    app.run(host='0.0.0.0', port=8085, debug=True)
+    app.run(host='0.0.0.0', port=8085, debug=True)  # TODO Change debug to False in production
 
 
 if __name__ == "__main__":

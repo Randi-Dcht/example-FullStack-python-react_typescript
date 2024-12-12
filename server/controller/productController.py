@@ -58,8 +58,9 @@ class ProductController(Resource):
                 return {"msg": "No description provided"}, 400
             if data.get("stock") is None or data.get("stock") == "":
                 return {"msg": "No stock provided"}, 400
-            create_product(data.get("name"), data.get("price"), data.get("tva"), data.get("description"),
+            id_product = create_product(data.get("name"), data.get("price"), data.get("tva"), data.get("description"),
                            data.get("stock"))
+            return {"msg": "Product created", "id": id_product}, 200
         except (DecodeError, ExpiredSignatureError):
             return {"msg": "Authentication required"}, 401
 

@@ -85,8 +85,7 @@ export default function HomePage() {
                             Nous sommes une entreprise de restauration rapide qui propose des hamburgers de qualité à La Louvière.
                         </p>
                         <div className="mt-10 flex items-center justify-center gap-x-6">
-                            <a href="/login" className="text-sm/6 font-semibold text-gray-900">Commander <span
-                                aria-hidden="true">→</span></a>
+                            <a href="/login" className="text-sm/6 font-semibold text-gray-900">Connexion</a>
                         </div>
                     </div>
                 </div>
